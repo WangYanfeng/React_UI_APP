@@ -8,19 +8,22 @@
     stroke-width: 1;
 }
 
-.App-logo {
+.login_logo {
   animation: App-logo-spin infinite 20s linear;
   pointer-events: none;
+  text-align: center;
+  padding-top: 7rem;
 }
   .login {
     position: relative;
     height: 100%;
-    background: linear-gradient(to bottom, rgba(84, 120, 180, 0.8) 0%, rgba(0, 0, 0, 0.6) 100%);
+    background: linear-gradient(to bottom, rgba(84, 120, 180, 0.28) 10%, rgba(0, 0, 0, 0.5) 100%);
     transition: opacity 0.1s, -webkit-transform 0.3s cubic-bezier(0.17, -0.65, 0.665, 1.25);
     transition: opacity 0.1s, transform 0.3s cubic-bezier(0.17, -0.65, 0.665, 1.25);
     transition: opacity 0.1s, transform 0.3s cubic-bezier(0.17, -0.65, 0.665, 1.25), -webkit-transform 0.3s cubic-bezier(0.17, -0.65, 0.665, 1.25);
-    /* -webkit-transform: scale(1); */
-    /* transform: scale(1); */
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    border-radius: 12px
   }
   .login.inactive {
     opacity: 0;
@@ -29,7 +32,7 @@
   }
   .login__form {
     position: absolute;
-    top: 40%;
+    top: 25%;
     left: 0;
     width: 100%;
     height: 50%;
@@ -72,7 +75,7 @@
     height: 4rem;
     margin: 2rem 0 2.2rem;
     color: rgba(255, 255, 255, 0.8);
-    background: #FF3366;
+    background: rgb(218, 52, 52);
     font-size: 1.5rem;
     border-radius: 3rem;
     cursor: pointer;
@@ -84,7 +87,7 @@
     color: #ABA8AE;
   }
   .login__signup a {
-    color: #fff;
+    color: red;
     cursor: pointer;
   }
   .container{

@@ -1,9 +1,10 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 
+import Container from './Container';
+
 function getGreeting(user) {
-  return user.name + "_" + user.familyName;
+  return "Welcome, " + user.name;
 }
 
 // 创建组件方法1 :Header
@@ -11,15 +12,22 @@ function Header(props) {
   //条件渲染
   if (props && Object.keys(props).length !== 0) {
     //创建React元素方法 1
-    let greetingElem = React.createElement(
-      'a',
-      {},
-      'Hello, ' + getGreeting(props.user) + '!'
-    )
+    // let greetingElem = React.createElement(
+    //   'a',
+    //   {},
+    //   'Welcome, ' + getGreeting(props.user) + '!'
+    // )
     return (
-      <div>
-        {greetingElem}&nbsp;|&nbsp;
-        <label onClick={props.handleLogoutClick}>Log off</label>
+      <div className="App-header">
+        <div className="banner"></div>
+        <div className="banner_info">
+          <svg className="banner_icon" viewBox="0 0 25 25">
+            <path d="M0,20 a10,8 0 0,1 20,0z M10,0 a4,4 0 0,1 0,8 a4,4 0 0,1 0,-8"></path>
+          </svg>
+          <label className="banner_link">{getGreeting(props.user)}</label>
+          <a href="#" className="banner_link" onClick={props.handleLogoutClick}>Log off</a>
+        </div>
+        {props.children}
       </div>
     )
   } else {
@@ -27,14 +35,14 @@ function Header(props) {
   }
 }
 
+//<img src={logo} className="App-logo" alt="logo" />
 function App(props) {
   //创建React元素方法 2. 大括号标记js表达式
   let appElem = (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>{getGreeting(props.user)}</p>
-      </header>
+      <Header user={props.user} handleLogoutClick={props.handleLogoutClick} />
+      <Container />
+      <Footer></Footer>
     </div>
   );
 
@@ -85,20 +93,26 @@ class Clock extends React.Component {
 
   render() {
     return (
-      <div>
-        <label>{this.state.date.toLocaleString()}</label>
-      </div>
+      <label>{this.state.date.toLocaleString()}</label>
     );
   }
 }
 
 function Footer() {
   return (
-    <div>
-      <Clock />
-    </div>
+    <div className="App-footer">
+      <div className="footer_main">
+        <p>© 2019 Trend Micro Incorporated. All Rights Reserved.</p>
+        <Clock />
+      </div>
+      <div className="footer_link">
+        <a href="#">
+          <img src="trend_logo.png" />
+        </a>
+      </div>
+    </div >
   );
 }
 
 
-export { Header, App, Footer }
+export default App;

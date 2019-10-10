@@ -10,6 +10,23 @@ html, body {
   height: 100%;
   overflow: hidden;
 }
+::-webkit-scrollbar{
+  width: 2px;/* 纵向滚动条*/
+  height: 2px;/* 横向滚动条 */
+  background-color: #fff;
+}
+
+/*定义滚动条轨道 内阴影*/
+::-webkit-scrollbar-track{
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0);
+  background-color: #fff;
+}
+
+/*定义滑块 内阴影*/
+::-webkit-scrollbar-thumb{
+  -webkit-box-shadow: inset 0 0 6px rgba(153, 19, 19, 0.089);
+  background-color: rgba(153, 19, 19, 0.089);
+}
 
 svg {
   display: inline-block;
@@ -23,15 +40,12 @@ input, button {
   border: none;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
-}
+
 
 .cont {
   position: relative;
   height: 100%;
-  background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/142996/slider-2.jpg");
+  background: -webkit-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%), -webkit-linear-gradient(top, rgba(57,173,219,.25) 0%,rgba(42,60,87,.4) 100%), -webkit-linear-gradient(-45deg, #670d10 0%,#092756 100%);
   background-size: cover;
   overflow: auto;
   font-family: "Open Sans", Helvetica, Arial, sans-serif;
@@ -44,6 +58,6 @@ code {
   margin-left: -15rem;
   margin-top: -26.5rem;
   width: 30rem;
-  height: 53rem;
+  height: 50rem;
   overflow: hidden;
 }
