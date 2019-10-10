@@ -1,0 +1,34 @@
+
+.App-footer{
+    border-top: 1px solid rgb(153, 19, 19);
+    /* border-bottom: 1px solid rgb(153, 19, 19); */
+    padding-left: 20vw;
+    padding-right: 20vw;
+    background: -webkit-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%), -webkit-linear-gradient(top, rgba(57,173,219,.25) 0%,rgba(42,60,87,.4) 100%), -webkit-linear-gradient(-45deg, #972125 0%,#092756 100%);
+    height: 120px;
+    color:white;
+}
+
+.footer_main{
+    padding-top: 40px;
+    float: left;
+    font-weight: 30;
+}
+
+.footer_link{
+    float: right;
+    line-height: 120px;
+}
+
+.footer_link img{
+    vertical-align: middle;
+    opacity: 0.6;
+    height: 30px;
+    transition: .3s;
+}
+
+.footer_link img:hover{
+    vertical-align: middle;
+    height: 31px;
+    opacity: 0.9;
+}

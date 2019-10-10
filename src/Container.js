@@ -1,13 +1,13 @@
 import React from 'react';
 import { Layout } from 'element-react';
 
-import Sidebar from './component/Sidebar'
+import Sidebar from './components/Sidebar'
 
 import 'element-theme-default';
 import 'element-theme-default/lib/index.css';
 import 'element-theme-default/lib/carousel-item.css';
 import 'element-theme-default/lib/carousel.css';
-import { Dashboard } from './component/Dashboard';
+import { Dashboard } from './components/Dashboard';
 
 class Container extends React.Component {
     constructor(props) {

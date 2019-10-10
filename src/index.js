@@ -2,11 +2,10 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 
-import Login from './login';
-import './login.css';
-import App from './App';
+import './index.css';
+import App from './Devices';
+import Login from './containers/login';
 
 class Page extends React.Component {
     constructor(props) {
@@ -17,8 +16,11 @@ class Page extends React.Component {
         this.handleLogoutClick = this.handleLogoutClick.bind(this);
     }
 
+    // 状态提升
     loginStatusChange(params) {
         if (params.success === true) {
+            // TODO: use Redux store save data
+            // TODO: should check user email format
             this.user.name = params.user.name;
             this.setState({ loginStatus: true });
         }
@@ -40,16 +42,7 @@ class Page extends React.Component {
             )
         } else {
             return (
-                <div className="cont">
-                    <div className="demo">
-                        <div className="login">
-                            <div className="login_logo">
-                                <img src="trend_logo.png" alt="logo" />
-                            </div>
-                            <Login onLoginStatusChange={this.loginStatusChange} />
-                        </div>
-                    </div>
-                </div>
+                <Login loginStatusChange={this.loginStatusChange} />
             )
         }
     }

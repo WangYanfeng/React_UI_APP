@@ -1,0 +1,37 @@
+/* background-color: #282c34; */
+.App-header {
+    border-bottom: 2px solid rgb(153, 19, 19);
+    /* border-top: 1px solid rgb(153, 19, 19); */
+    min-height: 70px;
+  }
+  .banner{
+    margin-left: 1vw;
+    width: 60vw;
+    height: 59px;
+    float: left;
+    display: block;
+    background: url("/product_banner.png") no-repeat;
+  }
+  .banner_info{
+    float: right;
+    margin-right: 2vw;
+    margin-top: 25px;
+  }
+  .banner_icon{
+    height: 3rem;
+    padding-top:3px;
+    stroke: #3a3737f0;
+    fill: none;
+    stroke-width: 1;
+    vertical-align: middle;
+  }
+  .banner_link{
+    margin-right: 1vw;
+    -webkit-transition: color 200ms ease;
+    transition: color 200ms ease;
+    color: #3a3737f0;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 20px;
+  }
