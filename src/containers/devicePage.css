@@ -1,0 +1,43 @@
+
+.menu_container{
+    height: 84vh;
+    min-width: 10vh;
+    border-width: 0 1px 0 0;
+    background-color: #fff !important;
+    border-color: #e3ebf6;
+    border-style: solid;
+    overflow-y: auto;
+}
+.menu_container ul{
+    background-color: #fff !important;
+}
+.menu_container ul li{
+    font-size: 12px;
+  }
+
+.board_container{
+    min-height: 84vh;
+    background-color: #f9fbfd;
+}
+
+
+.show_device_btn{
+    position: absolute;
+    top: 5rem;
+    right: 6rem;
+    padding-right: 2px;
+    width: 4.5em;
+    height: 4.5em;
+    border: none;
+    border-radius: 50%;
+    background: none;
+    background-color: rgb(153, 19, 19);
+    color: #fbfdff;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.5em;
+    text-transform: uppercase;
+    cursor: pointer;
+    -webkit-animation: animatePath 0.5s 0.5s forwards;
+    animation: animatePath 0.5s 0.5s forwards;
+}

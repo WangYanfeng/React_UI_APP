@@ -2,12 +2,14 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { HashRouter, Route, Switch } from 'react-router-dom';
 
 import './index.css';
-import App from './Devices';
 import Login from './containers/login';
+import HomePage from './containers/HomePage';
+import DevicePage from './containers/DevicePage';
 
-class Page extends React.Component {
+class Index extends React.Component {
     constructor(props) {
         super(props);
         this.state = { loginStatus: false };
@@ -23,6 +25,9 @@ class Page extends React.Component {
             // TODO: should check user email format
             this.user.name = params.user.name;
             this.setState({ loginStatus: true });
+            this.props.history.push({
+                pathname: '/index',
+            });
         }
     }
 
@@ -37,7 +42,7 @@ class Page extends React.Component {
         if (isLogin) {
             return (
                 <div>
-                    <App handleLogoutClick={this.handleLogoutClick} user={this.user} />
+                    <HomePage history={this.props.history} handleLogoutClick={this.handleLogoutClick} user={this.user} />
                 </div>
             )
         } else {
@@ -48,4 +53,14 @@ class Page extends React.Component {
     }
 }
 
-ReactDOM.render(<Page />, document.getElementById('root'));
+const BasicRoute = () => (
+    <HashRouter>
+        <Switch>
+            <Route exact path="/" component={Index} />
+            <Route exact path="/index" component={Index} />
+            <Route exact path="/device/:id" component={DevicePage} />
+        </Switch>
+    </HashRouter>
+);
+
+ReactDOM.render(<BasicRoute />, document.getElementById('root'));

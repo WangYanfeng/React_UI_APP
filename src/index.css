@@ -8,11 +8,10 @@
 html, body {
   font-size: 62.5%;
   height: 100%;
-  overflow: hidden;
 }
 ::-webkit-scrollbar{
-  width: 2px;/* 纵向滚动条*/
-  height: 2px;/* 横向滚动条 */
+  width: 3px;/* 纵向滚动条*/
+  height: 3px;/* 横向滚动条 */
   background-color: #fff;
 }
 
@@ -24,8 +23,8 @@ html, body {
 
 /*定义滑块 内阴影*/
 ::-webkit-scrollbar-thumb{
-  -webkit-box-shadow: inset 0 0 6px rgba(153, 19, 19, 0.089);
-  background-color: rgba(153, 19, 19, 0.089);
+  -webkit-box-shadow: inset 0 0 6px rgba(153, 19, 19, 0.377);
+  background-color: rgba(153, 19, 19, 0.26);
 }
 
 svg {
@@ -40,12 +39,11 @@ input, button {
   border: none;
 }
 
-
-
 .cont {
   position: relative;
   height: 100%;
-  background: -webkit-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%), -webkit-linear-gradient(top, rgba(57,173,219,.25) 0%,rgba(42,60,87,.4) 100%), -webkit-linear-gradient(-45deg, #670d10 0%,#092756 100%);
+  
+  background: -webkit-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%), -webkit-linear-gradient(top, rgba(57,173,219,.25) 0%,rgba(42,60,87,.4) 100%), -webkit-linear-gradient(-45deg, #972125 0%,#092756 100%);
   background-size: cover;
   overflow: auto;
   font-family: "Open Sans", Helvetica, Arial, sans-serif;

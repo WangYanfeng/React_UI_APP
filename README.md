@@ -9,10 +9,20 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 5. 展示组件与容器组件
 6. 状态提升
 7. 组合
-
 ### react-router-dom
-### Webpack
+1. 标签跳转，函数跳转
+2. url传参，隐式传参
+3. goBack: this.props.history.goBack();
 ### Redux
+1. save
+### element-react
+### react-chartjs chart.js
+1. [GIT doc](https://github.com/chartjs/Chart.js/tree/v1.1.1)
+### Webpack
+1. 是打包工具
+### babel
+1. 是JS编译器，用来将最新的JS语法转化为ES5语法。babel还可以转换JSX语法。
+2. babel只转换语法，babel-pilofill可以转换api
 
 
 # Available Scripts
@@ -27,6 +37,7 @@ In the project directory, you can run: <br/>
 `npm install -g create-react-app`<br/>
 `npm install -g webpack webpack-cli `<br/>
 `create-react-app new-react-app`<br/>
+`npm install react-router-dom --save-dev`<br/>
 `npm install webpack-cli --save`<br/>
 `npm install element-react --save`<br/>
 `npm install element-theme-default --save`<br/>

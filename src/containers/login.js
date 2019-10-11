@@ -11,7 +11,7 @@ class Login extends React.Component {
     handleLoginClick(name, password) {
         //TODO: ajax request to backend
         /*
-        $.ajax()
+        $.ajax({});
         */
         if (false) {
             //if (name !== "Edwin" || password !== "111111") {
