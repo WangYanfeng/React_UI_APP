@@ -347,24 +347,26 @@ class Dashboard extends React.Component {
 
         return (
             <div className="dashboard_container" >
-                <div className="chart-wrapper">
+                <div className="chart_wrapper">
                     <Layout.Row>
-                        <Line data={lineData} options={lineOptions} width="1600" height="350" />
+                        <div className="chart_box">
+                            <Line data={lineData} options={lineOptions} width="1200" height="350" />
+                        </div>
                     </Layout.Row>
                     <Layout.Row>
                         <Layout.Col span="10">
-                            <div className="subchart-wrapper">
-                                <Bar data={barData} options={barOptions} width="600" height="250" />
+                            <div className="chart_box">
+                                <Bar data={barData} options={barOptions} width="500" height="250" />
                             </div>
                         </Layout.Col>
                         <Layout.Col span="7">
-                            <div className="subchart-wrapper">
-                                <Radar data={radarData} options={radarOptions} width="600" height="250" />
+                            <div className="chart_box">
+                                <Radar data={radarData} options={radarOptions} height="250" />
                             </div>
                         </Layout.Col>
-                        <Layout.Col span="6">
-                            <div className="subchart-wrapper">
-                                <Doughnut data={doughnutData} options={doughnutOptions} width="600" height="250" />
+                        <Layout.Col span="7">
+                            <div className="chart_box">
+                                <Doughnut data={doughnutData} options={doughnutOptions} height="250" />
                             </div>
                         </Layout.Col>
                     </Layout.Row>

@@ -7,7 +7,7 @@ function LoginFormHeader(props) {
             <div className="demo">
                 <div className="login">
                     <div className="login_logo">
-                        <img src="trend_logo.png" alt="logo" />
+                        <img src="/image/trend_logo.png" alt="logo" />
                     </div>
                     {props.children}
                 </div>

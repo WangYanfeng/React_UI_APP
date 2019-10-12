@@ -10,7 +10,7 @@
     height: 59px;
     float: left;
     display: block;
-    background: url("/product_banner.png") no-repeat;
+    background: url("/image/product_banner.png") no-repeat;
   }
   .banner_info{
     float: right;

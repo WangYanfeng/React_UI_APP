@@ -58,7 +58,7 @@ function Footer() {
             </div>
             <div className="footer_link">
                 <a href="#">
-                    <img src="trend_logo.png" />
+                    <img src="/image/trend_logo.png" />
                 </a>
             </div>
         </div >
