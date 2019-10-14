@@ -1,14 +1,14 @@
 import React from "react"
-
 import { Carousel } from 'element-react';
 
+import './devicesList.css'
 
 function DevicesList(props) {
     return (
         <div className="devices_carousel">
             <Carousel interval="4000" type="card" height="250px">
                 {
-                    [1, 2, 3].map((item, index) => {
+                    [1, 2, 3, 4, 5, 6, 7, 8].map((item, index) => {
                         let deviceClass = "";
                         let deviceStatus = "";
                         if (index === 2) {

@@ -1,0 +1,23 @@
+
+.dashboard_container{
+    padding-top: 5vh;
+    padding-bottom: 5vh;
+    min-width: 1400px;
+}
+
+.chart_wrapper {
+    margin-left: 50px;
+    margin-right: 50px;
+    text-align: center;
+}
+
+.chart_box{
+    margin: 10px;
+    padding-top:10px;
+    margin-bottom: 20px;
+    padding-bottom:10px;
+    border-radius: 5px;
+    background: #f9f9f9;
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+}

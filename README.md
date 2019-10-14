@@ -1,3 +1,5 @@
+React项目实战
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 # 简介
@@ -6,15 +8,19 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 2. 组件、受控组件、非受控组件
 3. Props、设置状态更新
 4. 生命周期
-5. 展示组件与容器组件
-6. 状态提升
-7. 组合
+5. 状态提升
+6. 组合
 ### react-router-dom
 1. 标签跳转，函数跳转
 2. url传参，隐式传参
 3. goBack: this.props.history.goBack();
-### Redux
-1. save
+### Redux [Learn Page](https://redux.js.org/introduction/getting-started)
+1. “展示组件”与“容器组件”分离
+2. redux: 分为store + action + reducer。 store通过dispatch()调用reducer处理action, 通过type处理并返回state。
+3. react-redux: 简化react使用redux。
+   connect() 把指定的state和指定的action与React组件连接起来。
+   \<Provider/> 把state传给它的所有子组件。
+4. 
 ### element-react
 ### react-chartjs chart.js
 1. [GIT doc](https://github.com/chartjs/Chart.js/tree/v1.1.1)
@@ -37,8 +43,11 @@ In the project directory, you can run: <br/>
 `npm install -g create-react-app`<br/>
 `npm install -g webpack webpack-cli `<br/>
 `create-react-app new-react-app`<br/>
-`npm install react-router-dom --save-dev`<br/>
+`npm install react-router-dom --save`<br/>
 `npm install webpack-cli --save`<br/>
+`npm install redux`<br/>
+`npm install react-redux`<br/>
+`npm install immutable`<br/>
 `npm install element-react --save`<br/>
 `npm install element-theme-default --save`<br/>
 `npm install --save chart.js@^1.1.1`<br/>

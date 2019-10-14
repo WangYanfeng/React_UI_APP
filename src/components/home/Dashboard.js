@@ -2,6 +2,8 @@ import React from 'react';
 import { Layout } from 'element-react';
 import { Line, Bar, Radar, Doughnut } from 'react-chartjs';
 
+import './dashboard.css'
+
 var barOptions = {
     //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
     scaleBeginAtZero: true,

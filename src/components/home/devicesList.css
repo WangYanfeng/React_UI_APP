@@ -1,0 +1,79 @@
+.devices_carousel {
+    padding-top: 5vh;
+    padding-left: 10vw;
+    padding-right: 10vw;
+  }
+  .devices_carousel .el-carousel__item:nth-child(2n) {
+    background-color: #99a9bf; 
+  }
+  .devices_carousel .el-carousel__item:nth-child(2n+1) {
+    background-color: #d3dce6; 
+  }
+  .carousel_item{
+    width: 100%;
+    height: 100%;
+    padding: 5px;
+  }
+  .devices_carousel .device_img{
+      float: left;
+      width: 30%;
+  }
+  .devices_carousel .device_info{
+      width: 70%;
+      height: 90%;
+      float: right;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      background-color: #fbfdff;
+      /* border: 1px solid #aaa; */
+      border: 1px solid rgba(0,0,0,.2);
+      border-radius: 7px;
+  }
+  .device_info .info_row{
+      margin-bottom: 2px;
+      margin-left: 15px;
+  }
+  .device_info hr{
+      border: 0.1px dashed #6b68685c;
+      height: 1px;
+      margin: 5px;
+  }
+  .info_row .info_title{
+      font-weight: bold;
+      width:200px;
+      display: inline-block;
+  }
+  .nic_up{
+      background-image: url(/image/icons/nic_green.gif);
+      border: 1px none #000;
+      color: #fff;
+      display: inline-block;
+      height: 35px;
+      margin-left: 3px;
+      overflow: hidden;
+      vertical-align: top;
+      width: 32px;
+      z-index: 1;
+  }
+  .nic_down{
+      background-image: url(/image/icons/nic_black.gif);
+      border: 1px none #000;
+      color: #fff;
+      display: inline-block;
+      height: 35px;
+      margin-left: 3px;
+      overflow: hidden;
+      vertical-align: top;
+      width: 32px;
+      z-index: 1;
+  }
+  .nic_label{
+      font-size:10px; color: #FFFFFF; margin-left:2px;
+  }
+  .warning_shadow{
+      box-shadow: 0 5px 15px rgba(197, 7, 7, 0.685);
+  }
+  .normal_shadow{
+      box-shadow: 0 5px 10px #2287d282;
+  }

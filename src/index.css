@@ -59,3 +59,11 @@ input, button {
   height: 50rem;
   overflow: hidden;
 }
+
+.main_container{
+    clear: both;
+    min-height: 84vh;
+    overflow-y: auto;
+    padding-bottom: 40px;
+    background: #f1f0f0;
+}

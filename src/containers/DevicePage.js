@@ -1,9 +1,9 @@
 import React from 'react';
 import { Layout } from 'element-react';
-import Sidebar from '../components/Sidebar';
+import Sidebar from '../components/device/Sidebar';
 
-import Header from '../components/HomePage/Header';
-import Footer from '../components/HomePage/Footer';
+import Header from '../components/home/Header';
+import Footer from '../components/home/Footer';
 
 import './devicePage.css';
 import 'element-theme-default';
@@ -54,7 +54,7 @@ class DevicePage extends React.Component {
     }
     showChooseDevice() {
         //this.props.history.goBack();
-        this.props.history.push('/index');
+        this.props.history.push('/home');
     }
 }
 
