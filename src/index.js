@@ -2,8 +2,9 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { HashRouter, Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import { HashRouter, Route, Switch } from 'react-router-dom';
+// import { PersistGate } from 'redux-persist/lib/integration/react';
 
 import store from './redux/store'
 import LoginPage from './containers/LoginPage';

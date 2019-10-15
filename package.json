@@ -11,9 +11,12 @@
     "react-chartjs": "^1.2.0",
     "react-dom": "^16.9.0",
     "react-hot-loader": "^4.12.14",
+    "react-json-tree": "^0.11.2",
     "react-redux": "^7.1.1",
     "react-scripts": "3.1.1",
-    "redux": "^4.0.4"
+    "redux": "^4.0.4",
+    "redux-persist": "^6.0.0",
+    "redux-saga": "^1.1.1"
   },
   "scripts": {
     "start": "react-scripts start",

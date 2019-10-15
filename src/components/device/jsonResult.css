@@ -1,0 +1,5 @@
+.jsonResult .inner{
+    height: 750px;
+    overflow: scroll;
+    padding-left:10px;
+}

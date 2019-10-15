@@ -19,6 +19,7 @@ class HomePage extends React.Component {
         this.handleLogoutClick = this.handleLogoutClick.bind(this);
     }
 
+    // shouldComponentUpdate()可以停止React update
     shouldComponentUpdate() {
         if (this.props.user === null || this.props.user.name === "") {
             this.props.history.replace('/');
@@ -37,7 +38,6 @@ class HomePage extends React.Component {
     }
 
     render() {
-        console.log('in render');
         return (
             <div className="App">
                 <Header user={this.props.user} handleLogoutClick={this.handleLogoutClick} />
@@ -57,17 +57,20 @@ class HomePage extends React.Component {
         //         id: deviceId
         //     }
         // });
-        this.props.history.push('#/device/' + deviceId);
+        this.props.history.push('/device/' + deviceId);
     }
     handleLogoutClick() {
-        //this.props.history.replace('/');
         console.log("logout success");
         this.props.Logout();
+        /**
+        1. Logout 会触发UI更新：mapStateToProps被调用
+        2. Logout 后续的函数仍然会被调用
+        */
     }
 }
 
 var mapStateToProps = (state) => {
-    console.log(JSON.stringify(state.user));
+    console.log(">in home page:" + JSON.stringify(state.user));
     return {
         user: state.user.get("userInfo")
     }

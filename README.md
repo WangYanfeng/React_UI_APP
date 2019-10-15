@@ -20,7 +20,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 3. react-redux: 简化react使用redux。
    connect() 把指定的state和指定的action与React组件连接起来。
    \<Provider/> 把state传给它的所有子组件。
-4. 
+4. redux-persist redux的state数据必须保存到localStorage或sessionStorage，否则刷新页面后会丢失。redux-persist可以将store中的数据缓存到浏览器的sessionStorage或者localStorage中
 ### element-react
 ### react-chartjs chart.js
 1. [GIT doc](https://github.com/chartjs/Chart.js/tree/v1.1.1)
@@ -51,5 +51,6 @@ In the project directory, you can run: <br/>
 `npm install element-react --save`<br/>
 `npm install element-theme-default --save`<br/>
 `npm install --save chart.js@^1.1.1`<br/>
-`npm install --save react-chartjs`
+`npm install --save react-chartjs`<br/>
+`npm install react-json-tree --save`
 

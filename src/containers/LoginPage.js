@@ -10,17 +10,27 @@ class Login extends React.Component {
         this.handleLoginClick = this.handleLoginClick.bind(this);
     }
 
+    // 状态提升
     handleLoginClick(name, password) {
         //TODO: ajax request to backend
         /*
         $.ajax({});
         */
         //if (false) {
-        if (name === "" || password === "") {
-            let errorMsg = "Incorrect username/password !";
+        let userInfo = {
+            name: "Fake",
+        }
+        // dispatch(userLoginSuccess(user));
+        this.props.LoginSuccess(userInfo);
+        this.props.history.push({
+            pathname: '/home',
+        });
+
+        if (name === "" || name === null) {
+            let errorMsg = "Please input username/password !";
             this.props.LoginFail(errorMsg);
         } else if (name !== "Edwin" || password !== "111111") {
-            let errorMsg = "Please input username/password !";
+            let errorMsg = "Incorrect username/password !";
             this.props.LoginFail(errorMsg);
         } else {
             let userInfo = {
@@ -41,14 +51,17 @@ class Login extends React.Component {
     }
 }
 
-// 告诉store需要哪个state
+// 告诉store需要哪个state，返回值作为props传递给div
 var mapStateToProps = (state) => {
-    console.log(JSON.stringify(state.user));
+    // console.log(JSON.stringify(state.user));
+    // localStorage.setItem() 保存到localStorage中
+    // sessionStorage
     return {
+        // state必须用get()获取
         errorMsg: state.user.get("errorMsg")
     }
 }
-// store会将需要派发的行为告诉reducer
+// 定义调用action的函数，store会将需要派发的行为告诉reducer。返回值作为props传递给div
 var mapDispatchToProps = (dispatch) => {
     return {
         LoginSuccess: (userInfo) => dispatch(userLoginSuccess(userInfo)),

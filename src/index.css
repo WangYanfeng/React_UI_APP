@@ -11,7 +11,7 @@ html, body {
 }
 ::-webkit-scrollbar{
   width: 3px;/* 纵向滚动条*/
-  height: 10px;/* 横向滚动条 */
+  height: 3px;/* 横向滚动条 */
   background-color: #fff;
 }
 
@@ -62,8 +62,7 @@ input, button {
 
 .main_container{
     clear: both;
-    min-height: 84vh;
+    min-height: 750px;
     overflow-y: auto;
-    padding-bottom: 40px;
     background: #f1f0f0;
 }

@@ -9,12 +9,6 @@ function getGreeting(user) {
 function Header(props) {
     //条件渲染
     if (props && Object.keys(props).length !== 0) {
-        //创建React元素方法 1
-        // let greetingElem = React.createElement(
-        //   'a',
-        //   {},
-        //   'Welcome, ' + getGreeting(props.user) + '!'
-        // )
         return (
             <div className="App-header">
                 <div className="banner"></div>
