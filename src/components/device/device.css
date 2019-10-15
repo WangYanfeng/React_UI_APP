@@ -1,0 +1,80 @@
+
+.menu_container{
+    height: 750px;
+    min-width: 10vh;
+    border-width: 0 1px 0 0;
+    background-color: #fff !important;
+    border-color: #e3ebf6;
+    border-style: solid;
+    overflow-y: auto;
+}
+.menu_container ul{
+    background-color: #fff !important;
+}
+.menu_container ul li{
+    font-size: 12px;
+  }
+
+.board_container{
+    min-height: 750px;
+    padding-top: 10px;
+    background-color: #f9fbfd;
+}
+
+.show_home_btn{
+    position: absolute;
+    top: 4rem;
+    right: 31rem;
+    padding-right: 2px;
+    width: 4.5em;
+    height: 4.5em;
+    border: none;
+    border-radius: 50%;
+    background: none;
+    background-color: rgb(153, 19, 19);
+    color: #fbfdff;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.5em;
+    text-transform: uppercase;
+    cursor: pointer;
+    -webkit-animation: animatePath 0.5s 0.5s forwards;
+    animation: animatePath 0.5s 0.5s forwards;
+    z-index: 99;
+}
+.jsonResult .inner{
+    height: 750px;
+    overflow: scroll;
+    padding-left:10px;
+}
+
+.panel_div{
+    margin-left:20px;
+    margin-right:20px;
+    font-size: 10px;
+    height: 460px;
+    padding: 20px;
+    border: 1px solid #d1dbe5;
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,.12), 0 0 6px 0 rgba(0,0,0,.04);
+}
+.panel_div .el-tabs__item{
+    font-size:8px;
+}
+.panel_card{
+    margin:10px;
+    margin-left:20px;
+    margin-right:20px;
+    font-size: 12px;
+}
+.legendDiv{
+    line-height: 30px;
+    margin-left: 10px;
+}
+.legendKey{
+    width:200px;
+    display: block;
+    float: left;
+    margin-left: 10px
+}

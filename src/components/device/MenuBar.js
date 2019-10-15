@@ -2,8 +2,6 @@ import React from 'react';
 import { Menu } from 'element-react'
 import 'element-theme-default'
 
-import './menuBar.css';
-
 class Sidebar extends React.Component {
     constructor(props) {
         super(props);
@@ -14,8 +12,8 @@ class Sidebar extends React.Component {
         return (
             <div className="menu_container">
                 <div className="">
-                    <Menu defaultActive="1-1" className="el-menu-vertical-demo" onOpen={this.onOpen.bind(this)} onClose={this.onClose.bind(this)}>
-                        <Menu.Item index="1-3">Gateway Information</Menu.Item>
+                    <Menu defaultActive="1" className="el-menu-vertical-demo" onOpen={this.onOpen.bind(this)} onClose={this.onClose.bind(this)}>
+                        <Menu.Item index="1">Gateway Information</Menu.Item>
                         <Menu.SubMenu index="2" title={<span><i className="el-icon-menu"></i>Gateway Setting</span>}>
                             <Menu.Item index="2-1">Interface</Menu.Item>
                             <Menu.Item index="2-2">Network</Menu.Item>

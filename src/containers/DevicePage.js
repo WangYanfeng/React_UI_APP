@@ -9,6 +9,8 @@ import Footer from '../components/home/Footer';
 import MenuBar from '../components/device/MenuBar';
 import { userLogout } from '../redux/actions/user_actions'
 
+import '../components/device/device.css';
+
 import 'element-theme-default';
 import 'element-theme-default/lib/index.css';
 import 'element-theme-default/lib/carousel.css';

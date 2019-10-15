@@ -17,7 +17,6 @@ class Policy extends React.Component {
 }
 
 var mapStateToProps = (state) => {
-    console.log(JSON.stringify(state.policy));
     return {
         policy: state.policy
     }

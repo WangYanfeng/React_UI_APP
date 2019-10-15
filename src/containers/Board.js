@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import BoardDiv from '../components/device/BoardDiv'
+import GateInfo from '../components/device/GateInfo'
 
 class Board extends React.Component {
     constructor(props) {
@@ -10,13 +10,15 @@ class Board extends React.Component {
 
     render() {
         return (
-            <BoardDiv></BoardDiv>
+            <div className="board_container">
+                <button className="show_home_btn" onClick={this.props.showHomePage}>Home</button>
+                <GateInfo></GateInfo>
+            </div>
         )
     }
 }
 
 var mapStateToProps = (state) => {
-    console.log(JSON.stringify(state.policy));
     return {
         policy: state.policy
     }

@@ -1,8 +1,6 @@
 import React from 'react'
 import JSONTree from 'react-json-tree';
 
-import './jsonResult.css'
-
 const theme = {
     scheme: 'monokai',
     author: 'wimer hazenberg (http://www.monokai.nl)',

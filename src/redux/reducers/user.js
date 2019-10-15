@@ -32,7 +32,6 @@ const user = (state = initialState, action = {}) => {
         default:
             session = JSON.parse(sessionStorage.getItem('persist:user'));
             if (session !== null) {
-                console.log(">>>>>>>>>in default" + JSON.stringify(session));
                 state.userInfo = session;
                 return state.merge({
                     userInfo: session,
