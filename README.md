@@ -3,7 +3,7 @@ React项目实战
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 # 简介
-### React
+#### React
 1. 默认index.js 是入口文件。约定大于配置
 2. 组件、受控组件、非受控组件
 3. Props、设置状态更新
@@ -21,6 +21,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
    connect() 把指定的state和指定的action与React组件连接起来。
    \<Provider/> 把state传给它的所有子组件。
 4. redux-persist redux的state数据必须保存到localStorage或sessionStorage，否则刷新页面后会丢失。redux-persist可以将store中的数据缓存到浏览器的sessionStorage或者localStorage中
+5. 
 ### element-react
 ### react-chartjs chart.js
 1. [GIT doc](https://github.com/chartjs/Chart.js/tree/v1.1.1)

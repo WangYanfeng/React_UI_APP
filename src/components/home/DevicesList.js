@@ -8,7 +8,7 @@ function DevicesList(props) {
         <div className="devices_carousel">
             <Carousel interval="4000" type="card" height="250px">
                 {
-                    [1, 2, 3, 4, 5, 6, 7, 8].map((item, index) => {
+                    [1, 2, 3, 4, 5, 6].map((item, index) => {
                         let deviceClass = "";
                         let deviceStatus = "";
                         if (index === 2) {

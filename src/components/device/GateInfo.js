@@ -1,12 +1,13 @@
 import React from 'react'
 
 import { Layout, Card, Button, Tabs } from 'element-react'
+import { relative } from 'path';
 
 function CMDPanel(props) {
     return (
         <Card className="panel_card" header={
             <div className="clearfix">
-                <span style={{ "lineHeight": "30px" }}>Push Command Pannel</span>
+                <span style={{ "lineHeight": "28px" }}>Push Command Pannel</span>
             </div>
         }
         >
@@ -57,13 +58,24 @@ function CMDPanel(props) {
                     </Card>
                 </Layout.Col>
             </Layout.Row>
+            <div style={{ paddingTop: 20 }}>
+                <Layout.Row>
+                    <Layout.Col span={6} offset={0}>
+                        <Card>
+                            <div className="addCmdPanel">
+                                <span className="plusIcon">+</span>
+                            </div>
+                        </Card>
+                    </Layout.Col>
+                </Layout.Row>
+            </div>
         </Card>
     );
 }
 
 function InfoPanel(props) {
     return (
-        <div className="panel_div">
+        <div className="info_panel_div">
             <Tabs type="card" value="1">
                 <Tabs.Pane label="General Information" name="1">
                     <div className="legendDiv">
