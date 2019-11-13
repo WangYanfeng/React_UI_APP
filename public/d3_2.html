@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>D3 Test</title>
+    <!-- <script src="./script/d3.js"></script> -->
+    <script src="https://d3js.org/d3.v4.js"></script>
+</head>
+<style>
+    .node {
+        cursor: pointer;
+    }
+
+    .tooltip {
+        background-color: #eee;
+        position: absolute;
+        visibility: hidden;
+        opacity: 0.8;
+        padding: 10px;
+        min-height: 30px;
+        min-width: 100px;
+        border-radius: 8px;
+        box-shadow: 0 3px 10px black;
+    }
+
+    .tooltip:before {
+        content: '';
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 10px 12px 10px 0;
+        border-color: transparent #eee transparent transparent;
+        position: absolute;
+        top: 15px;
+        left: 0;
+        -webkit-transform: translateX(-100%);
+        -moz-transform: translateX(-100%);
+        -ms-transform: translateX(-100%);
+        -o-transform: translateX(-100%);
+        transform: translateX(-100%);
+    }
+
+    .link {
+        fill: none;
+        stroke: #ccc;
+        stroke-width: 2px;
+    }
+
+    circle {
+        fill-opacity: .5;
+        stroke: rgb(31, 119, 180);
+        stroke-width: 1px;
+    }
+
+    .pack-leaf circle {
+        fill: #ff7f0e;
+        fill-opacity: .5;
+    }
+
+    text {
+        font: 10px sans-serif;
+        text-anchor: middle;
+    }
+</style>
+
+<body translate="no">
+    <noscript>You need to enable JavaScript to run this website.</noscript>
+    <div id="d3_container" style="height: 100%;"></div>
+</body>
+
+<script>
+    var treeData = {
+        "name": "CloudEdge",
+        'img': 'image/gateway.png',
+        "children":
+            [
+                {
+                    "name": "Parent 1",
+                    'img': 'image/switch.png',
+                    "children":
+                        [
+                            {
+                                "name": "Child 1",
+                                'img': 'image/wifi.png',
+                                "children":
+                                    [
+                                        {
+                                            "name": "Child 1.1",
+                                            "img": 'image/ipad.png',
+                                            "traffic": "33",
+                                            "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed.", "url": "http:example.com"
+                                        },
+                                        {
+                                            "name": "Child 1.2",
+                                            'img': 'image/iPhone.png',
+                                            "traffic": "22",
+                                            "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed.", "url": "http:example.com"
+                                        },
+                                        {
+                                            "name": "Child 1.3",
+                                            'img': 'image/iPhone.png',
+                                            "traffic": "44",
+                                            "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed.", "url": "http:example.com"
+                                        },
+                                        {
+                                            "name": "Child 1.4",
+                                            'img': 'image/iPhone.png',
+                                            "traffic": "66",
+                                            "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed.", "url": "http:example.com"
+                                        },
+                                        {
+                                            "name": "Child 1.5",
+                                            'img': 'image/iPhone.png',
+                                            "traffic": "99",
+                                            "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed.", "url": "http:example.com"
+                                        }
+                                    ]
+                            },
+                            {
+                                "name": "Child 2",
+                                'img': 'image/wifi.png',
+                                "children":
+                                    [
+                                        {
+                                            "name": "Child 2.1",
+                                            'img': 'image/macBook.png',
+                                            "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed.", "url": "http:example.com"
+                                        },
+                                        {
+                                            "name": "Child 2.2",
+                                            'img': 'image/winBook.png',
+                                            "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed.", "url": "http:example.com"
+                                        }
+                                    ]
+                            }
+                        ]
+                },
+                {
+                    "name": "Parent 3",
+                    'img': 'image/switch.png',
+                    "children":
+                        [
+                            {
+                                "name": "Child 3.1",
+                                'img': 'image/pc.png',
+                            },
+                            {
+                                "name": "Child 3.2",
+                                'img': 'image/pc.png',
+                            },
+                            {
+                                "name": "Child 3.3",
+                                'img': 'image/printer.png',
+                            }
+                        ]
+                }
+            ]
+
+    };
+
+    var treeMargin = { top: 80, right: 60, bottom: 30, left: 150 },
+        width = 1600 - treeMargin.left - treeMargin.right,
+        height = 800 - treeMargin.top - treeMargin.bottom;
+    var i = 0, duration = 500;
+
+    var packSize = { width: 200, height: 300 };
+
+    var tooltip = d3.select("body")
+        .append("div")
+        .attr("class", "tooltip")
+        .text("");
+
+    // Creates a treemap layout with default settings and assigns the size
+    var treemap = d3.tree().size([width, height]);
+
+    // Construct a rootnode from data
+    var rootNode = d3.hierarchy(treeData);
+    var zoom = d3.zoom().scaleExtent([1, 8]).on("zoom", function () {
+        treeSVG.attr("transform", d3.event.transform);
+    });
+
+    // Prepare svg element
+    var treeSVG = d3.select("#d3_container").append("svg")
+        .attr("width", width + treeMargin.left + treeMargin.right)
+        .attr("height", height + treeMargin.top + treeMargin.bottom)
+        .append("g")
+        .call(zoom)
+        .attr("transform", "translate(" + treeMargin.left + "," + treeMargin.top + ")");
+
+
+    //update tree node
+    rootNode = treemap(rootNode);
+    updateTree(rootNode);
+
+    function updateTree(source) {
+        const nodes = rootNode.descendants()
+        const links = rootNode.descendants().slice(1)
+
+        // depth normalization
+        nodes.forEach(d => d.y = d.depth * 150)
+
+        // ****************** Nodes Section: Draw node for each element in data***************************
+        // 数据连接，根据id绑定数据
+        var allNode = treeSVG.selectAll("g.node")
+            .data(nodes, function (d) {
+                return d.id //最初新点开的节点都没有id
+                    || (d.id = ++i); //为没有id的节点添加上ID
+            });
+
+        // 增加新的子节点
+        var packParent = [];
+        var nodeEnter = allNode.enter().append("g")
+            .attr("class", function (d) {
+                if (d.children) {
+                    d.type = "node_tree";
+                    return "node node--tree";
+                } else {
+                    let i = 0;
+                    for (i = 0; i < packParent.length; i++) {
+                        const element = packParent[i];
+                        if (element == d.parent.id) {
+                            break;
+                        }
+                    }
+                    if (packParent.length != 0 && i < packParent.length) {
+                        d.type = "node_leaf";
+                        return "node node--leaf";
+                    } else {
+                        d.type = "node_pack";
+                        d.x = d.parent.x;
+                        packParent.push(d.parent.id);
+                        return "node node--pack"
+                    }
+                }
+            });
+
+        var treeNode = treeSVG.selectAll("g.node--tree");
+        var packNode = treeSVG.selectAll("g.node--pack");
+        // var leafNode = treeSVG.selectAll("g.node--leaf");
+
+        // nodeEnter.attr("transform", function (d) {
+        treeNode.attr("transform", function (d) {
+            return "translate(" + d.x + "," + d.y + ")";
+            //return "translate(" + source.x0 + "," + source.y0 + ")";
+        });
+        // Draw a image for each node
+        // nodeEnter.append('image')
+        treeNode.append('image')
+            .attr('xlink:href', function (d) {
+                return d.data.img
+            })
+            .attr('x', function (d) { return - 50 })
+            .attr('y', function (d) { return - 70 })
+            .attr('height', 140)
+            .attr('width', 100);
+
+        //Draw pack image for leaf node
+        var packSVG = packNode
+            .attr("transform", function (d) {
+                console.log(d);
+                return "translate(" + (d.x - 100) + "," + (d.y - 50) + ")";
+            })
+            .append('svg')
+            .attr("width", packSize.width)
+            .attr("height", packSize.height);
+
+        var pack_g = packSVG.append("g");
+        drawPack(null, pack_g);
+
+        // ****************** links section ***************************
+        // 数据连接，根据目标节点的id绑定数据
+        var link = treeSVG.selectAll("path.link").data(links, function (d) { return d.id; });
+
+        //增加新连接
+        link.enter()
+            .append("path")
+            .attr("class", "link")
+            .attr("d", d => diagonal(d));
+        // 原有连接更新位置
+        link.transition().duration(2)
+            .attr("d", d => diagonal(d));
+
+    }
+
+    function diagonal(d) {
+        if (d.type != "node_leaf") {
+            return "M" + d.x + "," + d.y
+                + "C" + d.x + "," + (d.y + d.parent.y) / 2
+                + " " + d.parent.x + "," + (d.y + d.parent.y) / 2
+                + " " + d.parent.x + "," + d.parent.y;
+        }
+    }
+
+    function drawPack(error, pack_g) {
+        var data = {
+            name: "",
+            children: [
+                {
+                    name: "MacBook",
+                    value: 11
+                },
+                {
+                    name: "Dell",
+                    value: 20
+                },
+                {
+                    name: "Camera",
+                    value: 8
+                },
+                {
+                    name: "IP Phone",
+                    value: 5
+                },
+                {
+                    name: "iPhone",
+                    value: 30
+                },
+                {
+                    name: "Printer",
+                    value: 2
+                },
+                {
+                    name: "Android",
+                    value: 55
+                }
+            ]
+        }
+        if (error) throw error;
+
+        // 离散刻度映射颜色序列
+        var colorOrdinal = d3.scaleOrdinal().range(["#fff", "#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3", "#a6d854", "#ffd92f", "#e5c494", "#b3b3b3", "#fbb4ae", "#decbe4"]);
+
+        var pack_layout = d3.pack().size([packSize.width, packSize.height]);
+        root = d3.hierarchy(data)
+            .sum(function (d) {
+                return d.value;
+            })
+            .sort(function (a, b) {
+                return b.value - a.value;
+            });
+        var laidOutData = pack_layout(root).descendants();
+
+        var node = pack_g.selectAll(".node")
+            .data(laidOutData)
+            .enter().append("g")
+            // .attr("class", function (d) {
+            //     return d.children ? "pack-node" : "pack-leaf";
+            // })
+            .attr("transform", function (d) {
+                return "translate(" + d.x + "," + d.y + ")";
+            });
+
+        node.append("circle")
+            .attr("r", function (d) {
+                return d.r;
+            })
+            .attr("fill", function (d) {
+                return colorOrdinal(d.r);
+            });
+        node.append("text")
+            .text(function (d) { return d.data.name });
+    }
+
+</script>
+
+</html>

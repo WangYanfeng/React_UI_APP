@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>D3 Test</title>
+    <!-- <script src="./script/d3.js"></script> -->
+    <script src="https://d3js.org/d3.v4.js"></script>
+</head>
+<style>
+    circle {
+        fill: rgb(31, 119, 180);
+        fill-opacity: .25;
+        stroke: rgb(31, 119, 180);
+        stroke-width: 1px;
+    }
+
+    .leaf circle {
+        fill: #ff7f0e;
+        fill-opacity: .5;
+    }
+
+    text {
+        font: 10px sans-serif;
+        text-anchor: middle;
+    }
+</style>
+
+<body translate="no">
+    <noscript>You need to enable JavaScript to run this website.</noscript>
+    <div id="pack-div"></div>
+</body>
+
+<script>
+    var width = 300;
+    var height = 400;
+    var data = {
+        name: "",
+        children: [
+            {
+                name: "Leaf A",
+                value: 10
+            },
+            {
+                name: "Middle",
+                children: [
+                    {
+                        name: "Leaf B",
+                        value: 20
+                    },
+                    {
+                        name: "Leaf C",
+                        value: 15
+                    },
+                    {
+                        name: "Leaf D",
+                        value: 15
+                    }
+                ]
+            }
+        ]
+    }
+
+    var svg = d3.select("#pack-div").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+    var g = svg.append("g");
+
+    var pack_layout = d3.pack()
+        .size([width, height]);
+
+    function redraw(error, data) {
+        if (error) throw error;
+        root = d3.hierarchy(data)
+            .sum(function (d) { return d.value; })
+            .sort(function (a, b) { return b.value - a.value; });
+        var laidOutData = pack_layout(root).descendants();
+
+        var node = g.selectAll(".node")
+            .data(laidOutData)
+            .enter().append("g")
+            .attr("class", function (d) { return d.children ? "node" : "leaf node"; })
+            .attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+        node.append("circle")
+            .attr("r", function (d) { return d.r });
+        node.append("text")
+            .text(function (d) { return d.data.name });
+    }
+
+    redraw(null, data);
+</script>
+
+</html>

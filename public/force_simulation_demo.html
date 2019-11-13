@@ -1,0 +1,137 @@
+<html>
+
+<head>
+    <style>
+        .node circle {
+            stroke: #3a403d;
+            stroke-width: .5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div></div>
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <script>
+        var datas = [
+            {
+                "country": "Afghanistan",
+                "gdp": 33,
+                "continent": "Asia"
+            }, {
+                "country": "Albania",
+                "gdp": 22,
+                "continent": "Europe"
+            }, {
+                "country": "Algeria",
+                "gdp": 55,
+                "continent": "Africa"
+            }, {
+                "country": "Angola",
+                "gdp": 88,
+                "continent": "Africa"
+            }, {
+                "country": "Argentina",
+                "gdp": 22,
+                "continent": "Americas"
+            }, {
+                "country": "Bolivia",
+                "gdp": 99,
+                "continent": "Americas"
+            }, {
+                "country": "Japan",
+                "gdp": 500,
+                "continent": "Asia"
+            }, {
+                "country": "India",
+                "gdp": 300,
+                "continent": "Americas"
+            }, {
+                "country": "China",
+                "gdp": 888,
+                "continent": "Americas"
+            }
+        ]
+
+        var width = window.innerWidth,
+            height = window.innerHeight,
+            sizeDivisor = 20,
+            nodePadding = 2.5;
+
+        datas.forEach(function (d) {
+            d.gdp = +d.gdp;
+            d.size = +d.gdp / sizeDivisor;
+            d.size < 3 ? d.radius = 3 : d.radius = d.size;
+        });
+        console.log(datas);
+
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        // 离散刻度映射颜色序列
+        var color = d3.scaleOrdinal(["#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3", "#a6d854", "#ffd92f", "#e5c494", "#b3b3b3"]);
+
+        var simulation = d3.forceSimulation()
+            .force("forceX", d3.forceX().strength(.15).x(width * .5))
+            .force("forceY", d3.forceY().strength(.15).y(height * .5))
+            .force("center", d3.forceCenter().x(width * .4).y(height * .4))
+            .force("charge", d3.forceManyBody().strength(-15));
+
+        // sort the nodes so that the bigger ones are at the back
+        datas = datas.sort(function (a, b) { return b.size - a.size; });
+
+        //update the simulation based on the data
+        simulation
+            .nodes(datas)
+            .force("collide", d3.forceCollide().strength(.5).radius(function (d) { return d.radius + nodePadding; }).iterations(1))
+            .on("tick", function (d) {
+                node
+                    .attr("cx", function (d) { return d.x; })
+                    .attr("cy", function (d) { return d.y; })
+            });
+
+        var node = svg.append("g")
+            .attr("class", "node")
+            .selectAll("circle")
+            .data(datas)
+            .enter().append("circle")
+            .attr("r", function (d) { return d.radius; })
+            .attr("fill", function (d) { return color(d.continent); })
+            .attr("cx", function (d) { return d.x; })
+            .attr("cy", function (d) { return d.y; })
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
+
+        function dragstarted(d) {
+            if (!d3.event.active)
+                simulation.alphaTarget(.03).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+
+        function dragged(d) {
+            d.fx = d3.event.x;
+            d.fy = d3.event.y;
+        }
+
+        function dragended(d) {
+            if (!d3.event.active)
+                simulation.alphaTarget(.03);
+            d.fx = null;
+            d.fy = null;
+        }
+
+        function formatData(d) {
+            d.gdp = +d.gdp;
+            d.size = +d.gdp / sizeDivisor;
+            d.size < 3 ? d.radius = 3 : d.radius = d.size;
+            return d;
+        }
+    </script>
+</body>
+
+</html>
