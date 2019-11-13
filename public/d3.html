@@ -6,23 +6,248 @@
     <title>D3 Test</title>
     <!-- <script src="./script/d3.js"></script> -->
     <script src="https://d3js.org/d3.v4.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
 </head>
+<style>
+    .btn {
+        display: inline-block;
+        padding: 6px 12px;
+        margin-bottom: 0;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.42857143;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        background-image: none;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        color: #fff;
+        background-color: #428bca;
+        border-color: #357ebd;
+    }
+
+    .btn:hover {
+        border-radius: 4px;
+        background-color: #357ebd;
+    }
+
+    .progress-overlay {
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 99999;
+        background: rgba(34, 33, 33, 0.75);
+    }
+
+    .detect-result {
+        width: 500px;
+        font-size: 16px;
+        line-height: 30px;
+        position: fixed;
+        -webkit-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        left: 50%;
+        top: 50%;
+        background: #fff;
+        padding: 10px;
+        z-index: 9999;
+        text-align: center;
+        border: 5px solid #81CE97;
+        border-radius: 10px;
+        box-shadow: 0px 0px 15px 0px #81CE97;
+    }
+
+    .detect-result label {
+        display: inline-block;
+        width: 220px;
+    }
+
+    .progress-pie-chart {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background-color: #E5E5E5;
+        position: relative;
+        margin: 15% auto 0;
+    }
+
+    .progress-pie-chart.gt-50 {
+        background-color: #81CE97;
+    }
+
+    .gt-50 .ppc-progress .ppc-progress-fill {
+        clip: rect(0, 200px, 200px, 100px);
+        background: #E5E5E5;
+    }
+
+    .ppc-progress {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        left: calc(50% - 100px);
+        top: calc(50% - 100px);
+        width: 200px;
+        height: 200px;
+
+        clip: rect(0, 200px, 200px, 100px);
+    }
+
+    .ppc-progress .ppc-progress-fill {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        left: calc(50% - 100px);
+        top: calc(50% - 100px);
+        width: 200px;
+        height: 200px;
+
+        clip: rect(0, 100px, 200px, 0);
+        background: #81CE97;
+        transform: rotate(60deg);
+    }
+
+    .gt-50 .ppc-progress {
+        clip: rect(0, 100px, 200px, 0);
+    }
+
+    .ppc-progress.ppc-progress-fill {
+        clip: rect(0, 200px, 200px, 100px);
+        background: #E5E5E5;
+    }
+
+    .ppc-percents {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        left: calc(50% - 173.9130434783px/2);
+        top: calc(50% - 173.9130434783px/2);
+        width: 173.9130434783px;
+        height: 173.9130434783px;
+        background: #fff;
+        text-align: center;
+        display: table;
+    }
+
+    .ppc-percents span {
+        display: block;
+        font-size: 2.6em;
+        font-weight: bold;
+        color: #81CE97;
+    }
+
+    .pcc-percents-wrapper {
+        display: table-cell;
+        vertical-align: middle;
+    }
+</style>
+<style>
+    .control-pannel {
+        top: 100px;
+        right: -2px;
+        width: 300px;
+        position: fixed;
+        z-index: 99;
+
+        font-family: 'Lato', 'Lucida Grande', 'Lucida Sans Unicode', Tahoma, Sans-Serif;
+        line-height: 1.5;
+        font-size: 15px;
+        font-weight: 400;
+
+        background-color: #E5E5E5;
+        border-radius: 5px;
+        -webkit-box-shadow: -4px 4px 5px -4px rgba(112, 112, 112, 0.71);
+        -moz-box-shadow: -4px 4px 5px -4px rgba(112, 112, 112, 0.71);
+        box-shadow: -2px 3px 9px -2px rgba(112, 112, 112, 0.71);
+        box-sizing: border-box;
+        opacity: .7;
+    }
+
+    .category-items {
+        padding: 8px;
+    }
+
+    .view-btn-items {
+        text-align: center;
+    }
+
+    .view-btn {
+        background-color: #E5E5E5;
+        /* border-radius: 5px; */
+        cursor: pointer;
+        overflow: hidden;
+        text-align: center;
+        transition: background-color .2s, box-shadow .2s;
+        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .26);
+        padding: 8px 16px;
+        border: 1px solid #c7c7c7;
+        border-right: none;
+        width: 150px;
+        position: relative;
+        margin-right: -3px;
+    }
+
+    .tree-icon {
+        width: 20px;
+        height: 20px;
+        display: inline-block;
+        background: center center no-repeat;
+        background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyBpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBXaW5kb3dzIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkYzNkFCQ0ZBMTBCRTExRTM5NDk4RDFEM0E5RkQ1NEZCIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkYzNkFCQ0ZCMTBCRTExRTM5NDk4RDFEM0E5RkQ1NEZCIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6RjM2QUJDRjgxMEJFMTFFMzk0OThEMUQzQTlGRDU0RkIiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6RjM2QUJDRjkxMEJFMTFFMzk0OThEMUQzQTlGRDU0RkIiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7h1bLqAAAAWUlEQVR42mL8////BwYGBn4GCACxBRlIAIxAA/4jaXoPEkMyjJ+A/g9MDJQBRhYg8RFqMwg8RJIUINYLFDmBUi+ADQAF1n8ofk9yIAy6WPg4GgtDMRYAAgwAdLYwLAoIwPgAAAAASUVORK5CYII=");
+    }
+
+    .item-icon {
+        width: 20px;
+        height: 20px;
+        display: inline-block;
+        background: center center no-repeat;
+        background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyBpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBXaW5kb3dzIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkYzNkFCQ0ZBMTBCRTExRTM5NDk4RDFEM0E5RkQ1NEZCIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkYzNkFCQ0ZCMTBCRTExRTM5NDk4RDFEM0E5RkQ1NEZCIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6RjM2QUJDRjgxMEJFMTFFMzk0OThEMUQzQTlGRDU0RkIiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6RjM2QUJDRjkxMEJFMTFFMzk0OThEMUQzQTlGRDU0RkIiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7h1bLqAAAAWUlEQVR42mL8////BwYGBn4GCACxBRlIAIxAA/4jaXoPEkMyjJ+A/g9MDJQBRhYg8RFqMwg8RJIUINYLFDmBUi+ADQAF1n8ofk9yIAy6WPg4GgtDMRYAAgwAdLYwLAoIwPgAAAAASUVORK5CYII=");
+    }
+
+    .view-btn.active {
+        background-color: #428bca;
+        border-color: #357ebd;
+    }
+
+    .view-btn:hover {
+        background-color: #357ebd;
+    }
+
+    .clm-line {
+        height: 1px;
+        background: #716d87;
+        opacity: .5;
+        margin: 0px 5px 5px 5px;
+        margin-top: 5px;
+    }
+</style>
 <style>
     .node {
         cursor: pointer;
     }
 
     .tooltip {
-        background-color: rgba(57, 52, 63, 0.7);
         color: white;
         position: absolute;
         visibility: hidden;
-        opacity: 0.6;
-        padding: 10px;
+        opacity: 0.8;
+        padding: 8px;
         min-height: 30px;
         min-width: 100px;
         border-radius: 8px;
         box-shadow: 0 3px 10px black;
+        font-size: 10px;
+        line-height: 15px;
+        font-family: "Microsoft YaHei";
+        background-color: rgba(57, 52, 63, 0.7);
+        pointer-events: none;
+        z-index: 99999;
     }
 
     .tooltip:before {
@@ -31,7 +256,7 @@
         height: 0;
         border-style: solid;
         border-width: 10px 12px 10px 0;
-        opacity: 0.6;
+        opacity: 0.8;
         border-color: transparent rgba(57, 52, 63, 0.7) transparent transparent;
         position: absolute;
         top: 15px;
@@ -56,110 +281,453 @@
 
 <body translate="no">
     <noscript>You need to enable JavaScript to run this website.</noscript>
-    <div id="d3_container" style="height: 100%;"></div>
+    <button class="btn" id="detect_IOT">Detect IOT</button>
+    <div class="progress-overlay" style="display: none;">
+        <div class="progress-pie-chart">
+            <div class="ppc-progress">
+                <div class="ppc-progress-fill"></div>
+            </div>
+            <div class="ppc-percents">
+                <div class="pcc-percents-wrapper">
+                    <span>0%</span>
+                </div>
+            </div>
+        </div>
+        <div class="detect-result" id="detect_result">
+            <label>Detected Devices:</label>6<br />
+            <label>CVE Devices: </label>1<br />
+            <label>Weak Password Devices: </label>2<br />
+            <label>Danger Port Devices: </label>2<br />
+        </div>
+    </div>
+    <div class="control-pannel">
+        <div class="view-btn-items">
+            <button class="view-btn active" title="Tree">
+                <a class="tree-icon"></a>
+            </button>
+            <button class="view-btn" title="Item">
+                <a class="item-icon"></a>
+            </button>
+        </div>
+        <div class="clm-line"></div>
+        <div class="category-items">
+            <div>
+                <input type="checkbox" /> PC (2)
+            </div>
+            <div>
+                <input type="checkbox" /> Android Phone (8)
+            </div>
+            <div>
+                <input type="checkbox" /> iPhone (6)
+            </div>
+            <div>
+                <input type="checkbox" /> iPad (3)
+            </div>
+            <div>
+                <input type="checkbox" /> Apple Watch (2)
+            </div>
+            <div>
+                <input type="checkbox" /> Camera (5)
+            </div>
+            <div>
+                <input type="checkbox" /> Printer Scanner (1)
+            </div>
+        </div>
+    </div>
+    <div id="topo_container" style="height: 100%;"></div>
 </body>
-
 <script>
-    var treeData = {
-        "name": "CloudEdge",
-        'img': 'image/gateway.png',
-        "children":
-            [
-                {
-                    "name": "Parent 1",
-                    'img': 'image/switch.png',
-                    "children":
-                        [
-                            {
-                                "name": "Child 1",
-                                'img': 'image/wifi.png',
-                                "children":
-                                    [
-                                        {
-                                            "name": "Child 1.1",
-                                            'img': 'image/ipad.png',
-                                            "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed.", "url": "http:example.com"
-                                        },
-                                        {
-                                            "name": "Child 1.2",
-                                            'img': 'image/iPhone.png',
-                                            "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed.", "url": "http:example.com"
-                                        },
-                                        {
-                                            "name": "Child 1.3",
-                                            'img': 'image/iPhone.png',
-                                            "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed.", "url": "http:example.com"
-                                        }
-                                    ]
-                            },
-                            {
-                                "name": "Child 2",
-                                'img': 'image/wifi.png',
-                                "children":
-                                    [
-                                        {
-                                            "name": "Child 2.1",
-                                            'img': 'image/macBook.png',
-                                            "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed.", "url": "http:example.com"
-                                        },
-                                        {
-                                            "name": "Child 2.2",
-                                            'img': 'image/winBook.png',
-                                            "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed.", "url": "http:example.com"
-                                        }
-                                    ]
-                            }
-                        ]
-                },
-                {
-                    "name": "Parent 3",
-                    'img': 'image/switch.png',
-                    "children":
-                        [
-                            {
-                                "name": "Child 3.1",
-                                'img': 'image/pc.png',
-                            },
-                            {
-                                "name": "Child 3.2",
-                                'img': 'image/pc.png',
-                            },
-                            {
-                                "name": "Child 3.3",
-                                'img': 'image/printer.png',
-                            }
-                        ]
-                }
-            ]
+    var tooltip = null;
 
-    };
-
-    var margin = { top: 40, right: 60, bottom: 30, left: 150 },
+    var treeData = null, treemap = null, rootNode = null, treeSVG = null;
+    // set tree canvas size
+    var margin = { top: 80, right: 60, bottom: 30, left: 150 },
         width = 1600 - margin.left - margin.right,
         height = 800 - margin.top - margin.bottom;
-    var i = 0, duration = 500;
+    var i = 0;
+    // tree animation time
+    var duration = 500;
 
-    var tooltip = d3.select("body")
-        .append("div")
-        .attr("class", "tooltip")
-        .text("");
+    $(function () {
+        $("#detect_IOT").click(function () {
+            $('.ppc-progress-fill').css('transform', 'rotate(1deg)');
+            $('.progress-pie-chart').removeClass('gt-50');
+            $('.progress-overlay').show();
+            $('.progress-pie-chart').show();
+            $('#detect_result').hide();
 
-    // Creates a treemap layout with default settings and assigns the size
-    var treemap = d3.tree().size([width, height]);
+            let percent = 5;
+            let id = setInterval(function () {
+                if (percent > 100) {
+                    clearInterval(id);
+                    //Show detected result
+                    $('.progress-pie-chart').hide();
+                    $('#detect_result').show();
+                    setTreeData();
+                    setTimeout(function () {
+                        $('.progress-overlay').hide();
+                        drawTopology();
+                    }, 1500);
+                } else {
+                    let deg = 360 * percent / 100;
+                    if (percent > 50) {
+                        $('.progress-pie-chart').addClass('gt-50');
+                    }
+                    $('.ppc-progress-fill').css('transform', 'rotate(' + deg + 'deg)');
+                    $('.ppc-percents span').html(percent + '%');
+                    percent += 5;
+                }
+            }, 300);
 
-    // Construct a rootnode from data
-    var rootNode = d3.hierarchy(treeData);
+            function updateProgressBar() {
+                if (percent > 100) {
+                    clearInterval(id);
+                    $('.progress-overlay').hide();
+                } else {
+                    let deg = 360 * percent / 100;
+                    if (percent > 50) {
+                        $('.progress-pie-chart').addClass('gt-50');
+                    }
+                    $('.ppc-progress-fill').css('transform', 'rotate(' + deg + 'deg)');
+                    $('.ppc-percents span').html(percent + '%');
+                    percent += 5;
+                }
+            }
+        });
 
-    // Prepare svg element
-    var treeSVG = d3.select("#d3_container").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        function setTreeData() {
+            treeData = {
+                "name": "CloudEdge",
+                'img': 'image/icon_ce.png',
+                "children":
+                    [
+                        {
+                            "name": "LAN1 Switch",
+                            'img': 'image/icon_switch.png',
+                            "children":
+                                [
+                                    {
+                                        "name": "Child 1.1",
+                                        "img": 'image/icon_windows.png',
+                                        "traffic": "33",
+                                        "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed.", "url": "http:example.com",
+                                        "dev_ipv4": "192.168.0.100",
+                                        "dev_mac": "18:1D:EA:F5:FB:E5",
+                                        "dev_brand": "Dell",
+                                        "dev_module": "",
+                                        "dev_OS": "Windows 10",
+                                        "category": "PC",
+                                        "hostname": "NJ-LEON-LI",
+                                        "bytes": "180.86MB",
+                                        "band_width": "150.32kbps",
+                                        "vulnerability": 0,
+                                        "open_ports": [67, 123, 161],
+                                        "weak_passwd": "",
+                                        "security_score": 100
+                                    },
+                                    {
+                                        "name": "Child 1.2",
+                                        'img': 'image/icon_windows.png',
+                                        "traffic": "22",
+                                        "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed.", "url": "http:example.com",
+                                        "dev_ipv4": "192.168.0.101",
+                                        "dev_mac": "30:B4:9E:F3:DF:76",
+                                        "dev_brand": "Lenovo",
+                                        "dev_module": "",
+                                        "dev_OS": "Windows 7",
+                                        "category": "PC",
+                                        "hostname": "NJ-CAKE-XU1",
+                                        "bytes": "1.53GB",
+                                        "band_width": "317kbps",
+                                        "vulnerability": 0,
+                                        "open_ports": [21, 135, 139, 445],
+                                        "weak_passwd": "",
+                                        "security_score": 100
+                                    },
+                                    {
+                                        "name": "Child 1.3",
+                                        'img': 'image/icon_mac.png',
+                                        "traffic": "44",
+                                        "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed.", "url": "http:example.com",
+                                        "dev_ipv4": "192.168.201.102",
+                                        "dev_mac": "88:1D:EA:F5:FB:E5",
+                                        "dev_brand": "Apple",
+                                        "dev_module": "MacBook Pro",
+                                        "dev_OS": "Mac OS X",
+                                        "category": "MacBook",
+                                        "hostname": "nj-leonli-mac",
+                                        "bytes": "461.33MB",
+                                        "band_width": "87.18kbps",
+                                        "vulnerability": 0,
+                                        "open_ports": [137, 5353],
+                                        "weak_passwd": "",
+                                        "security_score": 100
+                                    },
+                                    {
+                                        "name": "Child 1.4",
+                                        'img': 'image/icon_printer.png',
+                                        "traffic": "66",
+                                        "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed.", "url": "http:example.com",
+                                        "dev_ipv4": "192.168.0.103",
+                                        "dev_mac": "C4:65:16:50:D1:54",
+                                        "dev_brand": "HP",
+                                        "dev_module": "HP OfficeJet 3830",
+                                        "dev_OS": "unkown",
+                                        "category": "",
+                                        "hostname": "HP OfficeJet 3830 series",
+                                        "bytes": "20.28MB",
+                                        "band_width": "152.61kbps",
+                                        "vulnerability": 2,
+                                        "open_ports": [80, 137, 161, 443, 515, 631, 5353],
+                                        "weak_passwd": "",
+                                        "security_score": 60
+                                    },
+                                    {
+                                        "name": "Child 1.5",
+                                        'img': 'image/icon_camera.png',
+                                        "traffic": "99",
+                                        "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed.", "url": "http:example.com",
+                                        "dev_ipv4": "192.168.0.104",
+                                        "dev_mac": "28:10:7B:1C:B1:0D",
+                                        "dev_brand": "D-LINK",
+                                        "dev_module": "D-LINK camera(DCS-930L)",
+                                        "dev_OS": "unkown",
+                                        "category": "",
+                                        "hostname": "DCS-930L",
+                                        "bytes": "720.82MB",
+                                        "band_width": "152.49kbps",
+                                        "vulnerability": 1,
+                                        "open_ports": [22, 80, 1270, 8080],
+                                        "weak_passwd": "Yes",
+                                        "security_score": 80
+                                    }
+                                ]
+                        },
+                        {
+                            "name": "LAN2",
+                            'img': 'image/icon_linux.png',
+                            "dev_ipv4": "192.168.1.102",
+                            "dev_mac": "00:90:0B:65:0B:09",
+                            "dev_brand": "Intel",
+                            "dev_module": "",
+                            "dev_OS": "CentOS 7.5",
+                            "category": "",
+                            "hostname": "localhost",
+                            "bytes": "8.52GB",
+                            "band_width": "28.54Mbps",
+                            "vulnerability": 0,
+                            "open_ports": [22, 53, 80, 161, 443, 902, 8443, 8080],
+                            "weak_passwd": "",
+                            "security_score": 100
+                        },
+                        {
+                            "name": "LAN3 AP",
+                            'img': 'image/icon_switch.png',
+                            "children":
+                                [
+                                    {
+                                        "name": "Child 3.1",
+                                        'img': 'image/icon_apple.png',
+                                        "dev_ipv4": "192.168.201.101",
+                                        "dev_mac": "B0:34:95:16:B5:BB",
+                                        "dev_brand": "Apple",
+                                        "dev_module": "Wifi only iPad Air",
+                                        "dev_OS": "IOS",
+                                        "category": "iPad",
+                                        "hostname": "leon-li iPad",
+                                        "bytes": "920.91kB",
+                                        "band_width": "12.57kbps",
+                                        "vulnerability": 0,
+                                        "open_ports": [62078],
+                                        "weak_passwd": "",
+                                        "security_score": 100
+                                    },
+                                    {
+                                        "name": "Child 3.2",
+                                        'img': 'image/icon_apple.png',
+                                        "dev_ipv4": "192.168.201.102",
+                                        "dev_mac": "C0:CC:F8:3D:DA:ED",
+                                        "dev_brand": "Apple",
+                                        "dev_module": "iPhone 6s Plus",
+                                        "dev_OS": "iPhone/iOS 12.3.1",
+                                        "category": "iPhone",
+                                        "hostname": "LeoniPhone",
+                                        "bytes": "32.30kB",
+                                        "band_width": "704.12bps",
+                                        "vulnerability": 0,
+                                        "open_ports": [62078],
+                                        "weak_passwd": "",
+                                        "security_score": 100
+                                    },
+                                    {
+                                        "name": "Child 3.3",
+                                        'img': 'image/icon_android.png',
+                                        "dev_ipv4": "192.168.201.103",
+                                        "dev_mac": "9C:5C:F9:3C:82:A9",
+                                        "dev_brand": "Sony",
+                                        "dev_module": "Sony Xperia XZ",
+                                        "dev_OS": "Android/8.0.0",
+                                        "category": "Android Phone",
+                                        "hostname": "android-eeb3c6c7053e39bb",
+                                        "bytes": "89.57MB",
+                                        "band_width": "10.06kbps",
+                                        "vulnerability": 0,
+                                        "open_ports": [80],
+                                        "weak_passwd": "",
+                                        "security_score": 100
+                                    },
+                                    {
+                                        "name": "Child 3.4",
+                                        'img': 'image/icon_android.png',
+                                        "dev_ipv4": "192.168.201.104",
+                                        "dev_mac": "A4:93:3F:80:34:9B",
+                                        "dev_brand": "Huawei",
+                                        "dev_module": "HUAWEI MediaPad M5",
+                                        "dev_OS": "Android/8.1.1",
+                                        "category": "Android Tablet",
+                                        "hostname": "HUAWEI_MediaPad_M5-ebe24e",
+                                        "bytes": "129.04MB",
+                                        "band_width": "20.64kbps",
+                                        "vulnerability": 0,
+                                        "open_ports": [80],
+                                        "weak_passwd": "",
+                                        "security_score": 100
+                                    },
+                                    {
+                                        "name": "Child 3.5",
+                                        'img': 'image/icon_watch.png',
+                                        "dev_ipv4": "192.168.201.105",
+                                        "dev_mac": "68:FE:F7:41:BA:7E",
+                                        "dev_brand": "Apple",
+                                        "dev_module": "Apple Watch",
+                                        "dev_OS": "iOS",
+                                        "category": "Watch",
+                                        "hostname": "GavinsApleWatch",
+                                        "bytes": "159.75kB",
+                                        "band_width": "0bps",
+                                        "vulnerability": 0,
+                                        "open_ports": [62078],
+                                        "weak_passwd": "",
+                                        "security_score": 100
+                                    },
+                                    {
+                                        "name": "Child 3.6",
+                                        'img': 'image/icon_printer.png',
+                                        "dev_ipv4": "192.168.201.106",
+                                        "dev_mac": "9C:32:CE:76:02:98",
+                                        "dev_brand": "Canon",
+                                        "dev_module": "MX490",
+                                        "dev_OS": "",
+                                        "category": "Printer Scanner",
+                                        "hostname": "Canon MX490 series",
+                                        "bytes": "21.19MB",
+                                        "band_width": "12.53Mbps",
+                                        "vulnerability": 1,
+                                        "open_ports": [80, 443, 515, 631, 5353],
+                                        "weak_passwd": "",
+                                        "security_score": 75
+                                    },
+                                    {
+                                        "name": "Child 3.7",
+                                        'img': 'image/icon_camera.png',
+                                        "dev_ipv4": "192.168.201.107",
+                                        "dev_mac": "44:73:D6:0C:FD:56",
+                                        "dev_brand": "Logitech",
+                                        "dev_module": "LogiCircle",
+                                        "dev_OS": "",
+                                        "category": "IP Camera",
+                                        "hostname": "LogiCircle",
+                                        "bytes": "549.12MB",
+                                        "band_width": "17.84Mbps",
+                                        "vulnerability": 2,
+                                        "open_ports": [21, 22, 80],
+                                        "weak_passwd": "Yes",
+                                        "security_score": 50
+                                    },
+                                    {
+                                        "name": "Child 3.8",
+                                        'img': 'image/icon_tv.png',
+                                        "dev_ipv4": "192.168.201.108",
+                                        "dev_mac": "2C:2B:F9:48:A6:0B",
+                                        "dev_brand": "LG",
+                                        "dev_module": "LG TV 75UK6200PCB",
+                                        "dev_OS": "",
+                                        "category": "Smart TV",
+                                        "hostname": "LGwebOSTV",
+                                        "bytes": "189.32MB",
+                                        "band_width": "6.84Mbps",
+                                        "vulnerability": 0,
+                                        "open_ports": "",
+                                        "weak_passwd": "",
+                                        "security_score": 100
+                                    },
+                                    {
+                                        "name": "Child 3.9",
+                                        'img': 'image/icon_speaker.png',
+                                        "dev_ipv4": "192.168.201.109",
+                                        "dev_mac": "3C:5C:C4:ED:02:23",
+                                        "dev_brand": "Amazon",
+                                        "dev_module": "Echo 2nd",
+                                        "dev_OS": "",
+                                        "category": "Smart Speaker",
+                                        "hostname": "amazon-df3471842",
+                                        "bytes": "189.37MB",
+                                        "band_width": "6.83Mbps",
+                                        "vulnerability": 0,
+                                        "open_ports": "",
+                                        "weak_passwd": "",
+                                        "security_score": 100
+                                    },
+                                    {
+                                        "name": "Child 3.10",
+                                        'img': 'image/icon_game.png',
+                                        "dev_ipv4": "192.168.201.110",
+                                        "dev_mac": "F0:6E:0B:6E:33:69",
+                                        "dev_brand": "Microsoft",
+                                        "dev_module": "Xbox One",
+                                        "dev_OS": "",
+                                        "category": "Game Console",
+                                        "hostname": "Xbox One",
+                                        "bytes": "189.32MB",
+                                        "band_width": "2.87Mbps",
+                                        "vulnerability": 0,
+                                        "open_ports": "",
+                                        "weak_passwd": "",
+                                        "security_score": 100
+                                    }
+                                ]
+                        }
+                    ]
+            };
+        }
+    });
 
-    //update tree node
-    rootNode = treemap(rootNode);
-    updateTree(rootNode);
+    function drawTopology() {
+        if ($("#topo_container svg").length > 0) {
+            $("#topo_container svg").remove();
+        }
+        tooltip = d3.select("body")
+            .append("div")
+            .attr("class", "tooltip")
+            .text("");
+
+        // Creates a treemap layout with default settings and assigns the size
+        treemap = d3.tree().size([width, height]);
+
+        // Construct a rootnode from data
+        rootNode = d3.hierarchy(treeData);
+
+        // Prepare svg element
+        treeSVG = d3.select("#topo_container").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        //update tree node
+        rootNode = treemap(rootNode);
+        updateTree(rootNode);
+    }
 
     function updateTree(source) {
         const nodes = rootNode.descendants()
@@ -249,9 +817,8 @@
     }
 
     function nodeMouseover(d, id) {
-        console.log(d);
-        console.log(id);
-
+        // console.log(d);
+        // console.log(id);
         tooltip.text(d.data.name)
             .style("left", d.x + 30 + margin.left + "px")
             .style("top", d.y + margin.top + "px");
