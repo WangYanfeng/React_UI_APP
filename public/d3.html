@@ -9,6 +9,7 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
 </head>
 <style>
+    /* Button & Popup CSS */
     .btn {
         display: inline-block;
         padding: 6px 12px;
@@ -57,17 +58,43 @@
         left: 50%;
         top: 50%;
         background: #fff;
-        padding: 10px;
+        padding: 20px 10px 10px 10px;
         z-index: 9999;
         text-align: center;
-        border: 5px solid #81CE97;
-        border-radius: 10px;
+        border: 3px solid #81CE97;
+        border-radius: 20px/50px;
         box-shadow: 0px 0px 15px 0px #81CE97;
+        font-family: Arial;
     }
 
     .detect-result label {
         display: inline-block;
         width: 220px;
+    }
+
+    .detect-result .close {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        transition: all 200ms;
+        font-size: 30px;
+        font-weight: bold;
+        text-decoration: none;
+        color: #333;
+    }
+
+    .detect-result .close:hover {
+        color: #81CE97;
+    }
+
+    .danger_vul {
+        font-size: 16px;
+        color: red;
+    }
+
+    .danger_vul span {
+        font: bold;
+        font-size: 20px;
     }
 
     .progress-pie-chart {
@@ -149,11 +176,12 @@
     }
 </style>
 <style>
+    /* control pannel CSS */
     .control-pannel {
-        top: 100px;
-        right: -2px;
-        width: 300px;
-        position: fixed;
+        top: 60px;
+        width: 180px;
+        /* float: left; */
+        position: absolute;
         z-index: 99;
 
         font-family: 'Lato', 'Lucida Grande', 'Lucida Sans Unicode', Tahoma, Sans-Serif;
@@ -161,17 +189,16 @@
         font-size: 15px;
         font-weight: 400;
 
-        background-color: #E5E5E5;
+        background-color: #e5e5e594;
         border-radius: 5px;
         -webkit-box-shadow: -4px 4px 5px -4px rgba(112, 112, 112, 0.71);
         -moz-box-shadow: -4px 4px 5px -4px rgba(112, 112, 112, 0.71);
         box-shadow: -2px 3px 9px -2px rgba(112, 112, 112, 0.71);
         box-sizing: border-box;
-        opacity: .7;
     }
 
     .category-items {
-        padding: 8px;
+        padding: 2px 8px;
     }
 
     .view-btn-items {
@@ -179,44 +206,40 @@
     }
 
     .view-btn {
-        background-color: #E5E5E5;
-        /* border-radius: 5px; */
+        border-radius: 4px;
+        padding: 8px;
+        display: inline-block;
+        line-height: 1;
+        white-space: nowrap;
         cursor: pointer;
-        overflow: hidden;
+        background: none;
+        border: 1px solid #e5e5e594;
+        color: #606266;
+        -webkit-appearance: none;
         text-align: center;
-        transition: background-color .2s, box-shadow .2s;
-        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .26);
-        padding: 8px 16px;
-        border: 1px solid #c7c7c7;
-        border-right: none;
-        width: 150px;
-        position: relative;
-        margin-right: -3px;
+        box-sizing: border-box;
+        outline: none;
+        margin: 0;
+        transition: .1s;
+        font-weight: 500;
+        /* padding: 12px 20px; */
+        font-size: 14px;
+        cursor: pointer;
     }
 
-    .tree-icon {
-        width: 20px;
-        height: 20px;
-        display: inline-block;
-        background: center center no-repeat;
-        background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyBpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBXaW5kb3dzIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkYzNkFCQ0ZBMTBCRTExRTM5NDk4RDFEM0E5RkQ1NEZCIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkYzNkFCQ0ZCMTBCRTExRTM5NDk4RDFEM0E5RkQ1NEZCIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6RjM2QUJDRjgxMEJFMTFFMzk0OThEMUQzQTlGRDU0RkIiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6RjM2QUJDRjkxMEJFMTFFMzk0OThEMUQzQTlGRDU0RkIiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7h1bLqAAAAWUlEQVR42mL8////BwYGBn4GCACxBRlIAIxAA/4jaXoPEkMyjJ+A/g9MDJQBRhYg8RFqMwg8RJIUINYLFDmBUi+ADQAF1n8ofk9yIAy6WPg4GgtDMRYAAgwAdLYwLAoIwPgAAAAASUVORK5CYII=");
+    .view-btn:hover {
+        border: 1px solid #357ebd;
+        opacity: 0.8;
     }
 
-    .item-icon {
-        width: 20px;
-        height: 20px;
-        display: inline-block;
-        background: center center no-repeat;
-        background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyBpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBXaW5kb3dzIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkYzNkFCQ0ZBMTBCRTExRTM5NDk4RDFEM0E5RkQ1NEZCIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkYzNkFCQ0ZCMTBCRTExRTM5NDk4RDFEM0E5RkQ1NEZCIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6RjM2QUJDRjgxMEJFMTFFMzk0OThEMUQzQTlGRDU0RkIiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6RjM2QUJDRjkxMEJFMTFFMzk0OThEMUQzQTlGRDU0RkIiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7h1bLqAAAAWUlEQVR42mL8////BwYGBn4GCACxBRlIAIxAA/4jaXoPEkMyjJ+A/g9MDJQBRhYg8RFqMwg8RJIUINYLFDmBUi+ADQAF1n8ofk9yIAy6WPg4GgtDMRYAAgwAdLYwLAoIwPgAAAAASUVORK5CYII=");
+    .view-btn img {
+        width: 25px;
+        height: 25px;
     }
 
     .view-btn.active {
         background-color: #428bca;
         border-color: #357ebd;
-    }
-
-    .view-btn:hover {
-        background-color: #357ebd;
     }
 
     .clm-line {
@@ -228,36 +251,37 @@
     }
 </style>
 <style>
+    /* Topology CSS */
     .node {
         cursor: pointer;
     }
 
-    .tooltip {
+    .device-tip {
         color: white;
         position: absolute;
         visibility: hidden;
-        opacity: 0.8;
+        opacity: 0.85;
         padding: 8px;
         min-height: 30px;
-        min-width: 100px;
+        min-width: 200px;
         border-radius: 8px;
         box-shadow: 0 3px 10px black;
         font-size: 10px;
         line-height: 15px;
         font-family: "Microsoft YaHei";
-        background-color: rgba(57, 52, 63, 0.7);
+        background-color: #545454;
         pointer-events: none;
         z-index: 99999;
     }
 
-    .tooltip:before {
+    .device-tip:before {
         content: '';
         width: 0;
         height: 0;
         border-style: solid;
         border-width: 10px 12px 10px 0;
-        opacity: 0.8;
-        border-color: transparent rgba(57, 52, 63, 0.7) transparent transparent;
+        opacity: 0.9;
+        border-color: transparent #545454 transparent transparent;
         position: absolute;
         top: 15px;
         left: 0;
@@ -268,14 +292,58 @@
         transform: translateX(-100%);
     }
 
-    .node--internal text {
-        text-shadow: 0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff;
+    .device-tip-hr {
+        height: 1px;
+        background: black;
+        opacity: .8;
+        margin: 5px 5px 5px 5px;
+    }
+
+    .device-tip .tip-header {
+        height: 40px;
+    }
+
+    .device-tip .tip-header span {
+        margin-left: 15px;
+        font-size: 16px;
+    }
+
+    .device-tip .tip-header img {
+        width: 35px;
+        height: 35px;
+        float: left;
+    }
+
+    .tip-items {
+        padding: 2px 5px;
+    }
+
+    .tip-items label {
+        width: 120px;
+        display: inline-block;
     }
 
     .link {
         fill: none;
         stroke: #ccc;
         stroke-width: 2px;
+    }
+
+    .dev-hostname-text {
+        font-size: 12px;
+        font-family: "Microsoft YaHei";
+        text-shadow: 0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff;
+    }
+
+    circle {
+        fill-opacity: .5;
+        stroke: rgb(31, 119, 180);
+        stroke-width: 1px;
+    }
+
+    .node--pack text {
+        font: 9px sans-serif;
+        text-anchor: middle;
     }
 </style>
 
@@ -294,19 +362,37 @@
             </div>
         </div>
         <div class="detect-result" id="detect_result">
-            <label>Detected Devices:</label>6<br />
-            <label>CVE Devices: </label>1<br />
-            <label>Weak Password Devices: </label>2<br />
-            <label>Danger Port Devices: </label>2<br />
+            <div style="margin-bottom:10px;">
+                <a class="close" href="#">×</a>
+            </div>
+            <div>
+                <label>Total Detected Devices :</label>
+                <span>16</span>
+            </div>
+            <div class="danger_vul">
+                <label>CVE : </label>
+                <span>6</span>
+            </div>
+            <div class="danger_vul">
+                <label>Weak Passwords : </label>
+                <span>5</span>
+            </div>
+            <div class="danger_vul">
+                <label>External Ports : </label>
+                <span>3</span>
+            </div>
         </div>
     </div>
-    <div class="control-pannel">
+    <div class="control-pannel" style="display: none;">
         <div class="view-btn-items">
             <button class="view-btn active" title="Tree">
-                <a class="tree-icon"></a>
+                <img src="image/icon_tree_show.png" />
+            </button>
+            <button class="view-btn" title="Chart">
+                <img src="image/icon_chart_show.png" />
             </button>
             <button class="view-btn" title="Item">
-                <a class="item-icon"></a>
+                <img src="image/icon_item_show.png" />
             </button>
         </div>
         <div class="clm-line"></div>
@@ -334,19 +420,88 @@
             </div>
         </div>
     </div>
-    <div id="topo_container" style="height: 100%;"></div>
+    <div id="topo_container"></div>
+    <div class="device-tip" id="device_tip">
+        <div>
+            <div class="tip-header" title="Information">
+                <img src="image/icon_info.png" id="logo">
+                <span id="tip_hostname"></span>
+                <br />
+                <span id="tip_category" style="font-size:10px;"></span>
+            </div>
+            <div class="tip-items">
+                <label>Device Brand:</label>
+                <span id="tip_dev_brand"></span>
+            </div>
+            <div class="tip-items">
+                <label>Device Module:</label>
+                <span id="tip_dev_module"></span>
+            </div>
+            <div class="tip-items">
+                <label>Device OS:</label>
+                <span id="tip_dev_OS"></span>
+            </div>
+            <div class="device-tip-hr"></div>
+        </div>
+        <div>
+            <div class="tip-header" title="Network">
+                <img src="image/icon_network.png" id="logo">
+                <span id="tip_dev_ipv4"></span>
+            </div>
+            <div class="tip-items">
+                <label>MAC Address:</label>
+                <span id="tip_dev_mac"></span>
+            </div>
+            <div class="tip-items">
+                <label>Traffic:</label>
+                <span id="tip_bytes"></span>
+            </div>
+            <div class="tip-items">
+                <label>Bandwidth:</label>
+                <span id="tip_band_width"></span>
+            </div>
+            <div class="device-tip-hr"></div>
+        </div>
+        <div>
+            <div class="tip-header" title="Security">
+                <img src="image/icon_security.png" id="logo">
+                <span id="tip_security_score">100</span>
+            </div>
+            <div class="tip-items">
+                <label>Vulnerability:</label>
+                <span id="tip_vulnerability"></span>
+            </div>
+            <div class="tip-items">
+                <label>Opened TCP Ports:</label>
+                <span id="tip_open_ports_tcp"></span>
+            </div>
+            <div class="tip-items">
+                <label>Opened UDP Ports:</label>
+                <span id="tip_open_ports_udp"></span>
+            </div>
+            <div class="tip-items">
+                <label>Weak Password:</label>
+                <span id="tip_weak_passwd"></span>
+            </div>
+        </div>
+    </div>
 </body>
 <script>
-    var tooltip = null;
+    var devicetip = null;
+    var topologyMode = "Tree";
 
     var treeData = null, treemap = null, rootNode = null, treeSVG = null;
     // set tree canvas size
-    var margin = { top: 80, right: 60, bottom: 30, left: 150 },
+    var margin = { top: 120, right: 60, bottom: 30, left: 120 },
         width = 1600 - margin.left - margin.right,
         height = 800 - margin.top - margin.bottom;
+    // tree node id
     var i = 0;
     // tree animation time
-    var duration = 500;
+    var duration = 300;
+
+    // Pack circle of chart topo
+    var packSize = { width: 200, height: 300 };
 
     $(function () {
         $("#detect_IOT").click(function () {
@@ -364,10 +519,6 @@
                     $('.progress-pie-chart').hide();
                     $('#detect_result').show();
                     setTreeData();
-                    setTimeout(function () {
-                        $('.progress-overlay').hide();
-                        drawTopology();
-                    }, 1500);
                 } else {
                     let deg = 360 * percent / 100;
                     if (percent > 50) {
@@ -377,7 +528,7 @@
                     $('.ppc-percents span').html(percent + '%');
                     percent += 5;
                 }
-            }, 300);
+            }, 100);
 
             function updateProgressBar() {
                 if (percent > 100) {
@@ -395,6 +546,37 @@
             }
         });
 
+        // close detect result, draw tree topology
+        $(".detect-result .close").click(function () {
+            $('.progress-overlay').hide();
+            $(".control-pannel").show();
+            if (topologyMode == "Tree") {
+                drawTreeTopology();
+            } else if (topologyMode == "Chart") {
+                drawChartTopology();
+            } else if (topologyMode == "Item") {
+                alert("show Item");
+            } else {
+                drawTreeTopology();
+            }
+        });
+
+        // click control pannel, change  topology mode
+        $(".view-btn").click(function () {
+            topologyMode = $(this).attr("Title");
+            $(this).siblings().removeClass("active");
+            $(this).addClass("active");
+            if (topologyMode == "Tree") {
+                drawTreeTopology();
+            } else if (topologyMode == "Chart") {
+                drawChartTopology();
+            } else if (topologyMode == "Item") {
+                alert("show Item");
+            } else {
+                drawTreeTopology();
+            }
+        });
+
         function setTreeData() {
             treeData = {
                 "name": "CloudEdge",
@@ -409,8 +591,6 @@
                                     {
                                         "name": "Child 1.1",
                                         "img": 'image/icon_windows.png',
-                                        "traffic": "33",
-                                        "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed.", "url": "http:example.com",
                                         "dev_ipv4": "192.168.0.100",
                                         "dev_mac": "18:1D:EA:F5:FB:E5",
                                         "dev_brand": "Dell",
@@ -420,84 +600,106 @@
                                         "hostname": "NJ-LEON-LI",
                                         "bytes": "180.86MB",
                                         "band_width": "150.32kbps",
-                                        "vulnerability": 0,
-                                        "open_ports": [67, 123, 161],
+                                        "vulnerability": {
+                                            "cve_num": 0,
+                                            "cve_list": []
+                                        },
+                                        "open_ports": {
+                                            "tcp": [21, 135, 139, 445, 5357],
+                                            "udp": [137]
+                                        },
                                         "weak_passwd": "",
                                         "security_score": 100
                                     },
                                     {
                                         "name": "Child 1.2",
                                         'img': 'image/icon_windows.png',
-                                        "traffic": "22",
-                                        "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed.", "url": "http:example.com",
                                         "dev_ipv4": "192.168.0.101",
                                         "dev_mac": "30:B4:9E:F3:DF:76",
                                         "dev_brand": "Lenovo",
                                         "dev_module": "",
                                         "dev_OS": "Windows 7",
                                         "category": "PC",
-                                        "hostname": "NJ-CAKE-XU1",
+                                        "hostname": "NJ-EDWIN-WANG",
                                         "bytes": "1.53GB",
                                         "band_width": "317kbps",
-                                        "vulnerability": 0,
-                                        "open_ports": [21, 135, 139, 445],
+                                        "vulnerability": {
+                                            "cve_num": 0,
+                                            "cve_list": []
+                                        },
+                                        "open_ports": {
+                                            "tcp": [135, 139, 445],
+                                            "udp": []
+                                        },
                                         "weak_passwd": "",
                                         "security_score": 100
                                     },
                                     {
                                         "name": "Child 1.3",
                                         'img': 'image/icon_mac.png',
-                                        "traffic": "44",
-                                        "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed.", "url": "http:example.com",
                                         "dev_ipv4": "192.168.201.102",
                                         "dev_mac": "88:1D:EA:F5:FB:E5",
                                         "dev_brand": "Apple",
                                         "dev_module": "MacBook Pro",
                                         "dev_OS": "Mac OS X",
                                         "category": "MacBook",
-                                        "hostname": "nj-leonli-mac",
+                                        "hostname": "NJ-KEN-LI-MAC",
                                         "bytes": "461.33MB",
                                         "band_width": "87.18kbps",
-                                        "vulnerability": 0,
-                                        "open_ports": [137, 5353],
+                                        "vulnerability": {
+                                            "cve_num": 0,
+                                            "cve_list": []
+                                        },
+                                        "open_ports": {
+                                            "tcp": [],
+                                            "udp": [137, 5353]
+                                        },
                                         "weak_passwd": "",
                                         "security_score": 100
                                     },
                                     {
                                         "name": "Child 1.4",
                                         'img': 'image/icon_printer.png',
-                                        "traffic": "66",
-                                        "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed.", "url": "http:example.com",
                                         "dev_ipv4": "192.168.0.103",
                                         "dev_mac": "C4:65:16:50:D1:54",
                                         "dev_brand": "HP",
                                         "dev_module": "HP OfficeJet 3830",
-                                        "dev_OS": "unkown",
+                                        "dev_OS": "",
                                         "category": "",
                                         "hostname": "HP OfficeJet 3830 series",
                                         "bytes": "20.28MB",
                                         "band_width": "152.61kbps",
-                                        "vulnerability": 2,
-                                        "open_ports": [80, 137, 161, 443, 515, 631, 5353],
+                                        "vulnerability": {
+                                            "cve_num": 2,
+                                            "cve_list": ["CVE-2017-2741", "CVE-2019-6318"]
+                                        },
+                                        "open_ports": {
+                                            "tcp": [80, 443, 631, 1270, 8080, 9100],
+                                            "udp": [137, 161, 5353]
+                                        },
                                         "weak_passwd": "",
                                         "security_score": 60
                                     },
                                     {
                                         "name": "Child 1.5",
                                         'img': 'image/icon_camera.png',
-                                        "traffic": "99",
-                                        "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed.", "url": "http:example.com",
                                         "dev_ipv4": "192.168.0.104",
                                         "dev_mac": "28:10:7B:1C:B1:0D",
                                         "dev_brand": "D-LINK",
                                         "dev_module": "D-LINK camera(DCS-930L)",
-                                        "dev_OS": "unkown",
+                                        "dev_OS": "",
                                         "category": "",
                                         "hostname": "DCS-930L",
                                         "bytes": "720.82MB",
                                         "band_width": "152.49kbps",
-                                        "vulnerability": 1,
-                                        "open_ports": [22, 80, 1270, 8080],
+                                        "vulnerability": {
+                                            "cve_num": 1,
+                                            "cve_list": ["CVE-2019-10999"]
+                                        },
+                                        "open_ports": {
+                                            "tcp": [],
+                                            "udp": []
+                                        },
                                         "weak_passwd": "Yes",
                                         "security_score": 80
                                     }
@@ -515,14 +717,20 @@
                             "hostname": "localhost",
                             "bytes": "8.52GB",
                             "band_width": "28.54Mbps",
-                            "vulnerability": 0,
-                            "open_ports": [22, 53, 80, 161, 443, 902, 8443, 8080],
+                            "vulnerability": {
+                                "cve_num": 0,
+                                "cve_list": []
+                            },
+                            "open_ports": {
+                                "tcp": [],
+                                "udp": [137, 5353]
+                            },
                             "weak_passwd": "",
                             "security_score": 100
                         },
                         {
                             "name": "LAN3 AP",
-                            'img': 'image/icon_switch.png',
+                            'img': 'image/icon_ap.png',
                             "children":
                                 [
                                     {
@@ -534,11 +742,17 @@
                                         "dev_module": "Wifi only iPad Air",
                                         "dev_OS": "IOS",
                                         "category": "iPad",
-                                        "hostname": "leon-li iPad",
+                                        "hostname": "Chen-Wang iPad",
                                         "bytes": "920.91kB",
                                         "band_width": "12.57kbps",
-                                        "vulnerability": 0,
-                                        "open_ports": [62078],
+                                        "vulnerability": {
+                                            "cve_num": 0,
+                                            "cve_list": []
+                                        },
+                                        "open_ports": {
+                                            "tcp": [],
+                                            "udp": []
+                                        },
                                         "weak_passwd": "",
                                         "security_score": 100
                                     },
@@ -554,8 +768,14 @@
                                         "hostname": "LeoniPhone",
                                         "bytes": "32.30kB",
                                         "band_width": "704.12bps",
-                                        "vulnerability": 0,
-                                        "open_ports": [62078],
+                                        "vulnerability": {
+                                            "cve_num": 0,
+                                            "cve_list": []
+                                        },
+                                        "open_ports": {
+                                            "tcp": [62078],
+                                            "udp": []
+                                        },
                                         "weak_passwd": "",
                                         "security_score": 100
                                     },
@@ -571,8 +791,14 @@
                                         "hostname": "android-eeb3c6c7053e39bb",
                                         "bytes": "89.57MB",
                                         "band_width": "10.06kbps",
-                                        "vulnerability": 0,
-                                        "open_ports": [80],
+                                        "vulnerability": {
+                                            "cve_num": 0,
+                                            "cve_list": []
+                                        },
+                                        "open_ports": {
+                                            "tcp": [],
+                                            "udp": []
+                                        },
                                         "weak_passwd": "",
                                         "security_score": 100
                                     },
@@ -588,8 +814,14 @@
                                         "hostname": "HUAWEI_MediaPad_M5-ebe24e",
                                         "bytes": "129.04MB",
                                         "band_width": "20.64kbps",
-                                        "vulnerability": 0,
-                                        "open_ports": [80],
+                                        "vulnerability": {
+                                            "cve_num": 0,
+                                            "cve_list": []
+                                        },
+                                        "open_ports": {
+                                            "tcp": [80],
+                                            "udp": []
+                                        },
                                         "weak_passwd": "",
                                         "security_score": 100
                                     },
@@ -602,11 +834,17 @@
                                         "dev_module": "Apple Watch",
                                         "dev_OS": "iOS",
                                         "category": "Watch",
-                                        "hostname": "GavinsApleWatch",
+                                        "hostname": "GavinsAppleWatch",
                                         "bytes": "159.75kB",
                                         "band_width": "0bps",
-                                        "vulnerability": 0,
-                                        "open_ports": [62078],
+                                        "vulnerability": {
+                                            "cve_num": 0,
+                                            "cve_list": []
+                                        },
+                                        "open_ports": {
+                                            "tcp": [],
+                                            "udp": []
+                                        },
                                         "weak_passwd": "",
                                         "security_score": 100
                                     },
@@ -614,16 +852,22 @@
                                         "name": "Child 3.6",
                                         'img': 'image/icon_printer.png',
                                         "dev_ipv4": "192.168.201.106",
-                                        "dev_mac": "9C:32:CE:76:02:98",
-                                        "dev_brand": "Canon",
-                                        "dev_module": "MX490",
+                                        "dev_mac": "48:5F:99:72:65:05",
+                                        "dev_brand": "Brother HL-L2395DW series",
+                                        "dev_module": "HL-L2395DW",
                                         "dev_OS": "",
                                         "category": "Printer Scanner",
-                                        "hostname": "Canon MX490 series",
+                                        "hostname": "Brother HL-L2395DW series",
                                         "bytes": "21.19MB",
                                         "band_width": "12.53Mbps",
-                                        "vulnerability": 1,
-                                        "open_ports": [80, 443, 515, 631, 5353],
+                                        "vulnerability": {
+                                            "cve_num": 1,
+                                            "cve_list": ["CVE-2018-11581"]
+                                        },
+                                        "open_ports": {
+                                            "tcp": [80, 443, 515, 631],
+                                            "udp": [137, 161, 5353]
+                                        },
                                         "weak_passwd": "",
                                         "security_score": 75
                                     },
@@ -639,8 +883,14 @@
                                         "hostname": "LogiCircle",
                                         "bytes": "549.12MB",
                                         "band_width": "17.84Mbps",
-                                        "vulnerability": 2,
-                                        "open_ports": [21, 22, 80],
+                                        "vulnerability": {
+                                            "cve_num": 1,
+                                            "cve_list": ["CVE-2019-13053"]
+                                        },
+                                        "open_ports": {
+                                            "tcp": [80, 443, 515, 631],
+                                            "udp": [137, 161, 5353]
+                                        },
                                         "weak_passwd": "Yes",
                                         "security_score": 50
                                     },
@@ -656,8 +906,14 @@
                                         "hostname": "LGwebOSTV",
                                         "bytes": "189.32MB",
                                         "band_width": "6.84Mbps",
-                                        "vulnerability": 0,
-                                        "open_ports": "",
+                                        "vulnerability": {
+                                            "cve_num": 0,
+                                            "cve_list": []
+                                        },
+                                        "open_ports": {
+                                            "tcp": [],
+                                            "udp": []
+                                        },
                                         "weak_passwd": "",
                                         "security_score": 100
                                     },
@@ -673,8 +929,14 @@
                                         "hostname": "amazon-df3471842",
                                         "bytes": "189.37MB",
                                         "band_width": "6.83Mbps",
-                                        "vulnerability": 0,
-                                        "open_ports": "",
+                                        "vulnerability": {
+                                            "cve_num": 0,
+                                            "cve_list": []
+                                        },
+                                        "open_ports": {
+                                            "tcp": [],
+                                            "udp": []
+                                        },
                                         "weak_passwd": "",
                                         "security_score": 100
                                     },
@@ -690,8 +952,14 @@
                                         "hostname": "Xbox One",
                                         "bytes": "189.32MB",
                                         "band_width": "2.87Mbps",
-                                        "vulnerability": 0,
-                                        "open_ports": "",
+                                        "vulnerability": {
+                                            "cve_num": 0,
+                                            "cve_list": []
+                                        },
+                                        "open_ports": {
+                                            "tcp": [],
+                                            "udp": []
+                                        },
                                         "weak_passwd": "",
                                         "security_score": 100
                                     }
@@ -700,16 +968,104 @@
                     ]
             };
         }
+
+        setTreeData();
+        drawTreeTopology();
+        $(".control-pannel").show();
     });
 
-    function drawTopology() {
+    function nodeMouseover(d, id, envent) {
+        formatDeviceTip(d);
+        if (topologyMode === "Tree") {
+            devicetip.style("left", d.x + 30 + margin.left + "px")
+                .style("top", d.y + margin.top + "px");
+        } else if (topologyMode === "Chart") {
+            // TODO: when zoom out, the position is not accurate.
+            if (d.children) {
+                //only show leaf chart info
+                return;
+            }
+            let x = d3.event.pageX;
+            let y = d3.event.pageY;
+            // console.log(d.belongToPackID);
+            let belongPack = d3.select("g.packid_" + d.belongToPackID);
+            // console.log(belongPack);
+            belongPack.each(function (pack_D) {
+                devicetip.style("left", pack_D.x + 35 + d.x + "px")
+                    .style("top", pack_D.y + d.y + 35 + "px");
+            });
+        }
+        return devicetip.style("visibility", "visible");
+    }
+
+    function nodeMouseout(d, id) {
+        return devicetip.style("visibility", "hidden");
+    }
+
+    // show device info into message tip
+    function formatDeviceTip(d) {
+        resetDeviceTip();
+        if (d.data.hasOwnProperty("hostname")) {
+            $("#tip_hostname").text(d.data.hostname);
+        }
+        if (d.data.hasOwnProperty("category")) {
+            $("#tip_category").text(d.data.category);
+        }
+        if (d.data.hasOwnProperty("dev_brand")) {
+            $("#tip_dev_brand").text(d.data.dev_brand);
+        } if (d.data.hasOwnProperty("dev_module")) {
+            $("#tip_dev_module").text(d.data.dev_module);
+        } if (d.data.hasOwnProperty("dev_OS")) {
+            $("#tip_dev_OS").text(d.data.dev_OS);
+        } if (d.data.hasOwnProperty("dev_ipv4")) {
+            $("#tip_dev_ipv4").text(d.data.dev_ipv4);
+        } if (d.data.hasOwnProperty("dev_mac")) {
+            $("#tip_dev_mac").text(d.data.dev_mac);
+        } if (d.data.hasOwnProperty("bytes")) {
+            $("#tip_bytes").text(d.data.bytes);
+        } if (d.data.hasOwnProperty("band_width")) {
+            $("#tip_band_width").text(d.data.band_width);
+        } if (d.data.hasOwnProperty("security_score")) {
+            $("#tip_security_score").text(d.data.security_score);
+        } if (d.data.hasOwnProperty("vulnerability")) {
+            $("#tip_vulnerability").text(d.data.vulnerability.cve_num);
+        } if (d.data.hasOwnProperty("open_ports")) {
+            $("#tip_open_ports_tcp").text(d.data.open_ports.tcp.length);
+        } if (d.data.hasOwnProperty("open_ports")) {
+            $("#tip_open_ports_udp").text(d.data.open_ports.udp.length);
+        } if (d.data.hasOwnProperty("weak_passwd")) {
+            $("#tip_weak_passwd").text(d.data.weak_passwd ? "Yes" : "No");
+        }
+    }
+    function resetDeviceTip() {
+        $("#tip_hostname").text("");
+        $("#tip_category").text("");
+        $("#tip_dev_brand").text("");
+        $("#tip_dev_module").text("");
+        $("#tip_dev_OS").text("");
+        $("#tip_dev_ipv4").text("");
+        $("#tip_dev_mac").text("");
+        $("#tip_bytes").text("");
+        $("#tip_band_width").text(0);
+        $("#tip_security_score").text("");
+        $("#tip_vulnerability").text("");
+        $("#tip_open_ports_tcp").text(0);
+        $("#tip_open_ports_udp").text(0);
+        $("#tip_weak_passwd").text("No");
+    }
+
+    /**  
+     * Topology show as Tree mode
+     * **/
+
+    function drawTreeTopology() {
+        if (!treeData) {
+            return;
+        }
         if ($("#topo_container svg").length > 0) {
             $("#topo_container svg").remove();
         }
-        tooltip = d3.select("body")
-            .append("div")
-            .attr("class", "tooltip")
-            .text("");
+        devicetip = d3.select("#device_tip");
 
         // Creates a treemap layout with default settings and assigns the size
         treemap = d3.tree().size([width, height]);
@@ -732,6 +1088,7 @@
     function updateTree(source) {
         const nodes = rootNode.descendants()
         const links = rootNode.descendants().slice(1)
+        i = 0;
 
         // depth normalization
         nodes.forEach(d => d.y = d.depth * 150)
@@ -771,18 +1128,69 @@
                 return "translate(" + d.x + "," + d.y + ")";
                 //return "translate(" + source.x0 + "," + source.y0 + ")";
             })
-            .on('click', clickNode)
-            .on('mouseover', nodeMouseover)
-            .on('mouseout', nodeMouseout);
+            .on('click', clickNode);
+
         // Draw a image for each node
         nodeEnter.append('image')
             .attr('xlink:href', function (d) {
                 return d.data.img
             })
-            .attr('x', function (d) { return - 50 })
-            .attr('y', function (d) { return - 70 })
-            .attr('height', 140)
-            .attr('width', 100);
+            .attr('x', function (d) { return - 40 })
+            .attr('y', function (d) { return - 40 })
+            .attr('height', 80)
+            .attr('width', 80)
+            .on('mouseover', nodeMouseover)
+            .on('mouseout', nodeMouseout);
+        // add vulnerability number
+        nodeEnter.append('ellipse')
+            .style('fill', '#ce1414')
+            .attr("transform", function (d) {
+                return "translate(30, -30)";
+            }).on('click', (d, id) => {
+                alert("redirect to detail");
+            })
+            .attr('rx', (d) => 14)
+            .attr('ry', (d) => 11)
+            .attr('visibility', (d) => {
+                if (d.data && d.data.vulnerability && d.data.vulnerability.cve_num > 0)
+                    return "visible";
+                else
+                    return "hidden";
+            });
+        nodeEnter.append("text")
+            .attr("fill", "white")
+            .style("background-color", "black")
+            .attr("dx", "25")
+            .attr("dy", "-25")
+            .attr('visibility', (d) => {
+                if (d.data && d.data.vulnerability && d.data.vulnerability.cve_num > 0)
+                    return "visible";
+                else
+                    return "hidden";
+            })
+            .on('click', (d, id) => {
+                alert("redirect to detail");
+            })
+            .text((d) => {
+                if (d.data.vulnerability)
+                    return d.data.vulnerability.cve_num;
+                else
+                    return 0;
+            });
+        // add hostname dom for each node
+        nodeEnter.append("text")
+            .style("text-anchor", "middle")
+            .attr("class", "dev-hostname-text")
+            .attr("dx", "0")
+            .attr("dy", "55")
+            .attr("title", (d) => d.data.hostname)
+            .text(function (d) {
+                let name = d.data.hostname ? d.data.hostname : d.data.name;
+                if (name.length > 12) {
+                    name = name.substr(0, 9) + "...";
+                }
+                return name;
+            });
 
         // 原有节点更新到新位置
         var nodeUpdate = node.transition()
@@ -816,25 +1224,217 @@
         updateTree(n);
     }
 
-    function nodeMouseover(d, id) {
-        // console.log(d);
-        // console.log(id);
-        tooltip.text(d.data.name)
-            .style("left", d.x + 30 + margin.left + "px")
-            .style("top", d.y + margin.top + "px");
-        return tooltip.style("visibility", "visible");
-    }
-
-    function nodeMouseout(d, id) {
-        tooltip.text("");
-        return tooltip.style("visibility", "hidden");
-    }
-
     function diagonal(d) {
         return "M" + d.x + "," + d.y
             + "C" + d.x + "," + (d.y + d.parent.y) / 2
             + " " + d.parent.x + "," + (d.y + d.parent.y) / 2
             + " " + d.parent.x + "," + d.parent.y;
+    }
+
+    /**  
+     * Topology show as Chart mode
+     * **/
+
+    function drawChartTopology() {
+        if (!treeData) {
+            return;
+        }
+        if ($("#topo_container svg").length > 0) {
+            $("#topo_container svg").remove();
+        }
+        devicetip = d3.select("#device_tip");
+
+        // Creates a treemap layout with default settings and assigns the size
+        treemap = d3.tree().size([width, height]);
+
+        let zoom = d3.zoom().scaleExtent([1, 6]).on("zoom", function () {
+            treeSVG.attr("transform", d3.event.transform);
+        });
+
+        // Construct a rootnode from data
+        rootNode = d3.hierarchy(treeData);
+
+        // Prepare svg element
+        treeSVG = d3.select("#topo_container").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+            .call(zoom);
+
+        //update tree node
+        rootNode = treemap(rootNode);
+        updateChar(rootNode);
+    }
+
+    function updateChar(source) {
+        const nodes = rootNode.descendants()
+        const links = rootNode.descendants().slice(1)
+        i = 0;
+        // depth normalization
+        nodes.forEach(d => d.y = d.depth * 150)
+
+        // ****************** Nodes Section: Draw node for each element in data***************************
+        // 数据连接，根据id绑定数据
+        let allNode = treeSVG.selectAll("g.node")
+            .data(nodes, function (d) {
+                return d.id //最初新点开的节点都没有id
+                    || (d.id = ++i); //为没有id的节点添加上ID
+            });
+
+        // 增加新的子节点
+        let packParent = [];
+        let nodeEnter = allNode.enter().append("g")
+            .attr("class", function (d) {
+                if (d.children) {
+                    d.type = "node_tree";
+                    return "node node--tree";
+                } else {
+                    let i = 0;
+                    for (i = 0; i < packParent.length; i++) {
+                        const element = packParent[i];
+                        if (element == d.parent.id) {
+                            break;
+                        }
+                    }
+                    if (packParent.length != 0 && i < packParent.length) {
+                        d.type = "node_leaf";
+                        return "node node--leaf";
+                    } else {
+                        d.type = "node_pack";
+                        d.x = d.parent.x;
+                        packParent.push(d.parent.id);
+                        return "node node--pack packid_" + d.id;
+                    }
+                }
+            });
+
+        let treeNodes = treeSVG.selectAll("g.node--tree");
+        let packNodes = treeSVG.selectAll("g.node--pack");
+
+        treeNodes.attr("transform", function (d) {
+            return "translate(" + d.x + "," + d.y + ")";
+        });
+        // Draw a image for tree node
+        treeNodes.append('image')
+            .attr('xlink:href', function (d) {
+                return d.data.img
+            })
+            .attr('x', - 40)
+            .attr('y', - 40)
+            .attr('height', 80)
+            .attr('width', 80);
+
+        //Draw pack image for the first leaf node
+        packNodes
+            .attr("transform", (d) => {
+                drawPack(d);
+                return "translate(" + (d.x - 100) + "," + (d.y - 100) + ")";
+            })
+
+        // ****************** links section ***************************
+        // 数据连接，根据目标节点的id绑定数据
+        let link = treeSVG.selectAll("path.link").data(links, function (d) { return d.id; });
+
+        //增加新连接
+        link.enter()
+            .append("path")
+            .attr("class", "link")
+            .attr("d", d => diagonal(d));
+        // 原有连接更新位置
+        link.transition()
+            .attr("d", d => diagonal(d));
+    }
+
+    function diagonal(d) {
+        if (d.type != "node_leaf") {
+            return "M" + d.x + "," + d.y
+                + "C" + d.x + "," + (d.y + d.parent.y) / 2
+                + " " + d.parent.x + "," + (d.y + d.parent.y) / 2
+                + " " + d.parent.x + "," + d.parent.y;
+        }
+    }
+
+    function drawPack(pack_d) {
+        let packID = pack_d.id;
+        // copy the object
+        let data = JSON.parse(JSON.stringify(pack_d.parent.data));
+        // 仅包含兄弟叶子节点
+        data.children = [];
+        let len = data.children.length;
+
+        if (pack_d.parent.data.children) {
+            pack_d.parent.data.children.forEach(function (d) {
+                if (!d.children)
+                    data.children.push(d);
+            })
+        }
+
+        // 离散刻度映射颜色序列
+        let colorOrdinal = d3.scaleOrdinal().range(["#fff", "#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3", "#a6d854", "#ffd92f", "#e5c494", "#b3b3b3", "#fbb4ae", "#decbe4"]);
+        let pack_layout = d3.pack().size([packSize.width, packSize.height]);
+        let packRoot = d3.hierarchy(data)
+            .sum(function (d) {
+                let traffic = 0;
+                if (d.bytes) {
+                    traffic = d.bytes.split(".")[0];
+                }
+                return parseInt(traffic);
+            })
+            .sort(function (a, b) {
+                let traffic_a = 0;
+                let traffic_b = 0;
+                if (a.bytes) {
+                    traffic = a.bytes.split(".")[0];
+                }
+                if (b.bytes) {
+                    traffic = b.bytes.split(".")[0];
+                }
+                return parseInt(traffic_b) - parseInt(traffic_a);
+            });
+        let laidOutData = pack_layout(packRoot).descendants();
+
+        packSVG = d3.selectAll("g.node--pack")
+            // packSVG = d3.select("#aaaa")
+            .filter((d, i) => {
+                if (d.id == packID) {
+                    return true;
+                }
+                return false;
+            })
+            .append("svg")
+            .attr("width", packSize.width)
+            .attr("height", packSize.height);
+
+        let packNode = packSVG.selectAll(".node--pack")
+            .data(laidOutData)
+            .enter()
+            .append("g")
+            .attr("transform", function (d) {
+                d.belongToPackID = packID;
+                return "translate(" + d.x + "," + d.y + ")";
+            })
+            .on('mouseover', nodeMouseover)
+            .on('mouseout', nodeMouseout);
+
+        packNode.append("circle")
+            .attr("r", function (d) {
+                return d.r;
+            })
+            .attr("fill", function (d) {
+                return colorOrdinal(d.r);
+            });
+
+        packNode.append("text")
+            .text(function (d) {
+                if (d.r < 13 || d.height != 0)
+                    return null;
+                let name = d.data.hostname ? d.data.hostname : d.data.name;
+                if (name.length > 8) {
+                    name = name.substr(0, 5) + "...";
+                }
+                return name;
+            });
     }
 </script>
 
