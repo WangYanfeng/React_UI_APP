@@ -259,7 +259,7 @@
     .device-tip {
         color: white;
         position: absolute;
-        visibility: hidden;
+        display: none;
         opacity: 0.85;
         padding: 8px;
         min-height: 30px;
@@ -345,6 +345,20 @@
         font: 9px sans-serif;
         text-anchor: middle;
     }
+
+    .item {
+        color: black;
+        /* font-size: 20; */
+    }
+
+    .item-header {
+        font-size: 16px;
+    }
+
+    .item-info {
+        font-size: 12px;
+        font-family: "Courier New", Menlo, Monaco, Consolas
+    }
 </style>
 
 <body translate="no">
@@ -367,19 +381,19 @@
             </div>
             <div>
                 <label>Total Detected Devices :</label>
-                <span>16</span>
+                <span id="detected_total_device_count">0</span>
             </div>
             <div class="danger_vul">
-                <label>CVE : </label>
-                <span>6</span>
+                <label>Vulnerability Issue: </label>
+                <span id="total_vulnerability_count">0</span>
             </div>
             <div class="danger_vul">
-                <label>Weak Passwords : </label>
-                <span>5</span>
+                <label>Weak Password Issue: </label>
+                <span id="total_weak_password_count">0</span>
             </div>
             <div class="danger_vul">
-                <label>External Ports : </label>
-                <span>3</span>
+                <label>Open Port Issue : </label>
+                <span id="total_open_port_count">0</span>
             </div>
         </div>
     </div>
@@ -398,25 +412,43 @@
         <div class="clm-line"></div>
         <div class="category-items">
             <div>
-                <input type="checkbox" /> PC (2)
+                Total devices: <span id="total_device_count">0</span>
             </div>
             <div>
-                <input type="checkbox" /> Android Phone (8)
+                <input type="checkbox" /> PC (<span id="pc_category_count">0</span>)
             </div>
             <div>
-                <input type="checkbox" /> iPhone (6)
+                <input type="checkbox" /> MacBook (<span id="macbook_category_count">0</span>)
             </div>
             <div>
-                <input type="checkbox" /> iPad (3)
+                <input type="checkbox" /> Android Phone (<span id="android_phone_category_count">0</span>)
             </div>
             <div>
-                <input type="checkbox" /> Apple Watch (2)
+                <input type="checkbox" /> Android Tablet (<span id="android_tablet_category_count">0</span>)
             </div>
             <div>
-                <input type="checkbox" /> Camera (5)
+                <input type="checkbox" /> iPhone (<span id="iphone_category_count">0</span>)
             </div>
             <div>
-                <input type="checkbox" /> Printer Scanner (1)
+                <input type="checkbox" /> iPad (<span id="ipad_category_count">0</span>)
+            </div>
+            <div>
+                <input type="checkbox" /> watch (<span id="watch_category_count">0</span>)
+            </div>
+            <div>
+                <input type="checkbox" /> IP Camera (<span id="ip_camera_category_count">0</span>)
+            </div>
+            <div>
+                <input type="checkbox" /> Printer Scanner (<span id="printer_scanner_category_count">0</span>)
+            </div>
+            <div>
+                <input type="checkbox" /> Smart TV (<span id="smart_tv_category_count">0</span>)
+            </div>
+            <div>
+                <input type="checkbox" /> Smart Speaker (<span id="smart_speaker_category_count">0</span>)
+            </div>
+            <div>
+                <input type="checkbox" /> Game Console (<span id="game_console_category_count">0</span>)
             </div>
         </div>
     </div>
@@ -488,9 +520,14 @@
 </body>
 <script>
     var devicetip = null;
+    var TopologyData = null;
+    var total_device_count = 0, pc_category_count = 0, macbook_category_count = 0, android_phone_category_count = 0,
+        android_tablet_category_count = 0, iphone_category_count = 0, ipad_category_count = 0, watch_category_count = 0,
+        printer_scanner_category_count = 0, ip_camera_category_count = 0, smart_tv_category_count = 0, smart_speaker_category_count = 0, game_console_category_count = 0;
+
     var topologyMode = "Tree";
 
-    var treeData = null, treemap = null, rootNode = null, treeSVG = null;
+    var treemap = null, rootNode = null, treeSVG = null;
     // set tree canvas size
     var margin = { top: 120, right: 60, bottom: 30, left: 120 },
         width = 1600 - margin.left - margin.right,
@@ -502,6 +539,11 @@
 
     // Pack circle of chart topo
     var packSize = { width: 200, height: 300 };
+    // item list of item topo
+    var itemSVG = null;
+    var indentWidth = 40;
+    var lineHeight = 20;
+    var itemTotalLineCount = 0;
 
     $(function () {
         $("#detect_IOT").click(function () {
@@ -515,10 +557,25 @@
             let id = setInterval(function () {
                 if (percent > 100) {
                     clearInterval(id);
-                    //Show detected result
+                    setTreeData();
                     $('.progress-pie-chart').hide();
                     $('#detect_result').show();
-                    setTreeData();
+                    //Show detected result
+                    let ret = {
+                        total_vulnerability_count: 0,
+                        total_weak_password_count: 0,
+                        total_open_port_count: 0
+                    }
+                    total_device_count = 0, pc_category_count = 0, macbook_category_count = 0, android_phone_category_count = 0,
+                        android_tablet_category_count = 0, iphone_category_count = 0, ipad_category_count = 0, watch_category_count = 0,
+                        printer_scanner_category_count = 0, ip_camera_category_count = 0, smart_tv_category_count = 0, smart_speaker_category_count = 0, game_console_category_count = 0;
+                    calculateDetectedResult(TopologyData, ret);
+                    //TODO: total_device_count 只计算叶子节点
+                    $("#detected_total_device_count").html(total_device_count - 3);
+                    $("#total_vulnerability_count").html(ret.total_vulnerability_count);
+                    $("#total_weak_password_count").html(ret.total_weak_password_count);
+                    $("#total_open_port_count").html(ret.total_open_port_count);
+                    showDeviceCount();
                 } else {
                     let deg = 360 * percent / 100;
                     if (percent > 50) {
@@ -555,7 +612,7 @@
             } else if (topologyMode == "Chart") {
                 drawChartTopology();
             } else if (topologyMode == "Item") {
-                alert("show Item");
+                drawItemTopology();
             } else {
                 drawTreeTopology();
             }
@@ -571,16 +628,20 @@
             } else if (topologyMode == "Chart") {
                 drawChartTopology();
             } else if (topologyMode == "Item") {
-                alert("show Item");
+                drawItemTopology();
             } else {
                 drawTreeTopology();
             }
         });
 
         function setTreeData() {
-            treeData = {
+            TopologyData = {
                 "name": "CloudEdge",
                 'img': 'image/icon_ce.png',
+                "dev_ipv4": "10.64.90.36",
+                "ce_module": "CloudEdgeSBW",
+                "ce_SN": "WDFN-FMWA-BFFB",
+                "ce_register": "Registed",
                 "children":
                     [
                         {
@@ -589,7 +650,7 @@
                             "children":
                                 [
                                     {
-                                        "name": "Child 1.1",
+                                        "name": "Child_1_1",
                                         "img": 'image/icon_windows.png',
                                         "dev_ipv4": "192.168.0.100",
                                         "dev_mac": "18:1D:EA:F5:FB:E5",
@@ -602,17 +663,25 @@
                                         "band_width": "150.32kbps",
                                         "vulnerability": {
                                             "cve_num": 0,
-                                            "cve_list": []
+                                            "cve_list": [],
+                                            "cve_url_list": []
                                         },
                                         "open_ports": {
-                                            "tcp": [21, 135, 139, 445, 5357],
-                                            "udp": [137]
+                                            "tcp": [2869],
+                                            "udp": [],
+                                            "ports_issue_num": 1,
+                                            "ports_issue_list": [],
+                                            "ports_issue_url": []
                                         },
-                                        "weak_passwd": "",
-                                        "security_score": 100
+                                        "weak_passwd": {
+                                            "passwd_issue_num": 1,
+                                            "passwd_issue_list": ["Anonymous FTP login allowed"],
+                                            "passwd_issue_url": ["https://esupport.trendmicro.com/en-us/home/pages/technical-support/home-network-security/1117998.aspx?view=WebView"]
+                                        },
+                                        "security_score": 80
                                     },
                                     {
-                                        "name": "Child 1.2",
+                                        "name": "Child_1_2",
                                         'img': 'image/icon_windows.png',
                                         "dev_ipv4": "192.168.0.101",
                                         "dev_mac": "30:B4:9E:F3:DF:76",
@@ -625,83 +694,116 @@
                                         "band_width": "317kbps",
                                         "vulnerability": {
                                             "cve_num": 0,
-                                            "cve_list": []
+                                            "cve_list": [],
+                                            "cve_url_list": []
                                         },
                                         "open_ports": {
                                             "tcp": [135, 139, 445],
-                                            "udp": []
+                                            "udp": [],
+                                            "ports_issue_num": 0,
+                                            "ports_issue_list": [],
+                                            "ports_issue_url": []
                                         },
-                                        "weak_passwd": "",
+                                        "weak_passwd": {
+                                            "passwd_issue_num": 0,
+                                            "passwd_issue_list": [],
+                                            "passwd_issue_url": []
+                                        },
                                         "security_score": 100
                                     },
                                     {
-                                        "name": "Child 1.3",
+                                        "name": "Child_1_3",
                                         'img': 'image/icon_mac.png',
                                         "dev_ipv4": "192.168.201.102",
                                         "dev_mac": "88:1D:EA:F5:FB:E5",
                                         "dev_brand": "Apple",
                                         "dev_module": "MacBook Pro",
                                         "dev_OS": "Mac OS X",
-                                        "category": "MacBook",
+                                        "category": "macbook",
                                         "hostname": "NJ-KEN-LI-MAC",
                                         "bytes": "461.33MB",
                                         "band_width": "87.18kbps",
                                         "vulnerability": {
                                             "cve_num": 0,
-                                            "cve_list": []
+                                            "cve_list": [],
+                                            "cve_url_list": []
                                         },
                                         "open_ports": {
                                             "tcp": [],
-                                            "udp": [137, 5353]
+                                            "udp": [137, 5353],
+                                            "ports_issue_num": 0,
+                                            "ports_issue_list": [],
+                                            "ports_issue_url": []
                                         },
-                                        "weak_passwd": "",
+                                        "weak_passwd": {
+                                            "passwd_issue_num": 0,
+                                            "passwd_issue_list": [],
+                                            "passwd_issue_url": []
+                                        },
                                         "security_score": 100
                                     },
                                     {
-                                        "name": "Child 1.4",
+                                        "name": "Child_1_4",
                                         'img': 'image/icon_printer.png',
                                         "dev_ipv4": "192.168.0.103",
                                         "dev_mac": "C4:65:16:50:D1:54",
                                         "dev_brand": "HP",
                                         "dev_module": "HP OfficeJet 3830",
                                         "dev_OS": "",
-                                        "category": "",
+                                        "category": "printer_scanner",
                                         "hostname": "HP OfficeJet 3830 series",
                                         "bytes": "20.28MB",
                                         "band_width": "152.61kbps",
                                         "vulnerability": {
-                                            "cve_num": 2,
-                                            "cve_list": ["CVE-2017-2741", "CVE-2019-6318"]
+                                            "cve_num": 1,
+                                            "cve_list": ["CVE-2010-4107"],
+                                            "cve_url_list": ["https://esupport.trendmicro.com/en-us/home/pages/technical-support/1121857.aspx"]
                                         },
                                         "open_ports": {
                                             "tcp": [80, 443, 631, 1270, 8080, 9100],
-                                            "udp": [137, 161, 5353]
+                                            "udp": [137, 161, 5353],
+                                            "ports_issue_num": 0,
+                                            "ports_issue_list": [],
+                                            "ports_issue_url": []
                                         },
-                                        "weak_passwd": "",
-                                        "security_score": 60
+                                        "weak_passwd": {
+                                            "passwd_issue_num": 0,
+                                            "passwd_issue_list": [],
+                                            "passwd_issue_url": []
+                                        },
+                                        "security_score": 71.7
                                     },
                                     {
-                                        "name": "Child 1.5",
+                                        "name": "Child_1_5",
                                         'img': 'image/icon_camera.png',
                                         "dev_ipv4": "192.168.0.104",
                                         "dev_mac": "28:10:7B:1C:B1:0D",
                                         "dev_brand": "D-LINK",
                                         "dev_module": "D-LINK camera(DCS-930L)",
                                         "dev_OS": "",
-                                        "category": "",
+                                        "category": "ip_camera",
                                         "hostname": "DCS-930L",
                                         "bytes": "720.82MB",
                                         "band_width": "152.49kbps",
                                         "vulnerability": {
-                                            "cve_num": 1,
-                                            "cve_list": ["CVE-2019-10999"]
+                                            "cve_num": 2,
+                                            "cve_list": ["CVE-2017-17761", "CVE-2018-16946"],
+                                            "cve_url_list": ["https://esupport.trendmicro.com/en-us/home/pages/technical-support/1120699.aspx",
+                                                "https://esupport.trendmicro.com/en-us/home/pages/technical-support/1122511.aspx?view=WebView"]
                                         },
                                         "open_ports": {
                                             "tcp": [],
-                                            "udp": []
+                                            "udp": [],
+                                            "ports_issue_num": 0,
+                                            "ports_issue_list": [],
+                                            "ports_issue_url": []
                                         },
-                                        "weak_passwd": "Yes",
-                                        "security_score": 80
+                                        "weak_passwd": {
+                                            "passwd_issue_num": 0,
+                                            "passwd_issue_list": [],
+                                            "passwd_issue_url": []
+                                        },
+                                        "security_score": 51.6
                                     }
                                 ]
                         },
@@ -713,19 +815,27 @@
                             "dev_brand": "Intel",
                             "dev_module": "",
                             "dev_OS": "CentOS 7.5",
-                            "category": "",
+                            "category": "PC",
                             "hostname": "localhost",
                             "bytes": "8.52GB",
                             "band_width": "28.54Mbps",
                             "vulnerability": {
                                 "cve_num": 0,
-                                "cve_list": []
+                                "cve_list": [],
+                                "cve_url_list": []
                             },
                             "open_ports": {
                                 "tcp": [],
-                                "udp": [137, 5353]
+                                "udp": [137, 5353],
+                                "ports_issue_num": 0,
+                                "ports_issue_list": [],
+                                "ports_issue_url": []
                             },
-                            "weak_passwd": "",
+                            "weak_passwd": {
+                                "passwd_issue_num": 0,
+                                "passwd_issue_list": [],
+                                "passwd_issue_url": []
+                            },
                             "security_score": 100
                         },
                         {
@@ -734,233 +844,314 @@
                             "children":
                                 [
                                     {
-                                        "name": "Child 3.1",
+                                        "name": "Child_3_1",
                                         'img': 'image/icon_apple.png',
                                         "dev_ipv4": "192.168.201.101",
                                         "dev_mac": "B0:34:95:16:B5:BB",
                                         "dev_brand": "Apple",
                                         "dev_module": "Wifi only iPad Air",
                                         "dev_OS": "IOS",
-                                        "category": "iPad",
+                                        "category": "ipad",
                                         "hostname": "Chen-Wang iPad",
                                         "bytes": "920.91kB",
                                         "band_width": "12.57kbps",
                                         "vulnerability": {
                                             "cve_num": 0,
-                                            "cve_list": []
+                                            "cve_list": [],
+                                            "cve_url_list": []
                                         },
                                         "open_ports": {
                                             "tcp": [],
-                                            "udp": []
+                                            "udp": [],
+                                            "ports_issue_num": 0,
+                                            "ports_issue_list": [],
+                                            "ports_issue_url": []
                                         },
-                                        "weak_passwd": "",
+                                        "weak_passwd": {
+                                            "passwd_issue_num": 0,
+                                            "passwd_issue_list": [],
+                                            "passwd_issue_url": []
+                                        },
                                         "security_score": 100
                                     },
                                     {
-                                        "name": "Child 3.2",
+                                        "name": "Child_3_2",
                                         'img': 'image/icon_apple.png',
                                         "dev_ipv4": "192.168.201.102",
                                         "dev_mac": "C0:CC:F8:3D:DA:ED",
                                         "dev_brand": "Apple",
                                         "dev_module": "iPhone 6s Plus",
                                         "dev_OS": "iPhone/iOS 12.3.1",
-                                        "category": "iPhone",
+                                        "category": "iphone",
                                         "hostname": "LeoniPhone",
                                         "bytes": "32.30kB",
                                         "band_width": "704.12bps",
                                         "vulnerability": {
                                             "cve_num": 0,
-                                            "cve_list": []
+                                            "cve_list": [],
+                                            "cve_url_list": []
                                         },
                                         "open_ports": {
                                             "tcp": [62078],
-                                            "udp": []
+                                            "udp": [],
+                                            "ports_issue_num": 0,
+                                            "ports_issue_list": [],
+                                            "ports_issue_url": []
                                         },
-                                        "weak_passwd": "",
+                                        "weak_passwd": {
+                                            "passwd_issue_num": 0,
+                                            "passwd_issue_list": [],
+                                            "passwd_issue_url": []
+                                        },
                                         "security_score": 100
                                     },
                                     {
-                                        "name": "Child 3.3",
+                                        "name": "Child_3_3",
                                         'img': 'image/icon_android.png',
                                         "dev_ipv4": "192.168.201.103",
                                         "dev_mac": "9C:5C:F9:3C:82:A9",
                                         "dev_brand": "Sony",
                                         "dev_module": "Sony Xperia XZ",
                                         "dev_OS": "Android/8.0.0",
-                                        "category": "Android Phone",
+                                        "category": "android_phone",
                                         "hostname": "android-eeb3c6c7053e39bb",
                                         "bytes": "89.57MB",
                                         "band_width": "10.06kbps",
                                         "vulnerability": {
                                             "cve_num": 0,
-                                            "cve_list": []
+                                            "cve_list": [],
+                                            "cve_url_list": []
                                         },
                                         "open_ports": {
                                             "tcp": [],
-                                            "udp": []
+                                            "udp": [],
+                                            "ports_issue_num": 0,
+                                            "ports_issue_list": [],
+                                            "ports_issue_url": []
                                         },
-                                        "weak_passwd": "",
+                                        "weak_passwd": {
+                                            "passwd_issue_num": 0,
+                                            "passwd_issue_list": [],
+                                            "passwd_issue_url": []
+                                        },
                                         "security_score": 100
                                     },
                                     {
-                                        "name": "Child 3.4",
+                                        "name": "Child_3_4",
                                         'img': 'image/icon_android.png',
                                         "dev_ipv4": "192.168.201.104",
                                         "dev_mac": "A4:93:3F:80:34:9B",
                                         "dev_brand": "Huawei",
                                         "dev_module": "HUAWEI MediaPad M5",
                                         "dev_OS": "Android/8.1.1",
-                                        "category": "Android Tablet",
+                                        "category": "android_tablet",
                                         "hostname": "HUAWEI_MediaPad_M5-ebe24e",
                                         "bytes": "129.04MB",
                                         "band_width": "20.64kbps",
                                         "vulnerability": {
                                             "cve_num": 0,
-                                            "cve_list": []
+                                            "cve_list": [],
+                                            "cve_url_list": []
                                         },
                                         "open_ports": {
                                             "tcp": [80],
-                                            "udp": []
+                                            "udp": [],
+                                            "ports_issue_num": 0,
+                                            "ports_issue_list": [],
+                                            "ports_issue_url": []
                                         },
-                                        "weak_passwd": "",
+                                        "weak_passwd": {
+                                            "passwd_issue_num": 0,
+                                            "passwd_issue_list": [],
+                                            "passwd_issue_url": []
+                                        },
                                         "security_score": 100
                                     },
                                     {
-                                        "name": "Child 3.5",
+                                        "name": "Child_3_5",
                                         'img': 'image/icon_watch.png',
                                         "dev_ipv4": "192.168.201.105",
                                         "dev_mac": "68:FE:F7:41:BA:7E",
                                         "dev_brand": "Apple",
                                         "dev_module": "Apple Watch",
                                         "dev_OS": "iOS",
-                                        "category": "Watch",
+                                        "category": "watch",
                                         "hostname": "GavinsAppleWatch",
                                         "bytes": "159.75kB",
                                         "band_width": "0bps",
                                         "vulnerability": {
                                             "cve_num": 0,
-                                            "cve_list": []
+                                            "cve_list": [],
+                                            "cve_url_list": []
                                         },
                                         "open_ports": {
                                             "tcp": [],
-                                            "udp": []
+                                            "udp": [],
+                                            "ports_issue_num": 0,
+                                            "ports_issue_list": [],
+                                            "ports_issue_url": []
                                         },
-                                        "weak_passwd": "",
+                                        "weak_passwd": {
+                                            "passwd_issue_num": 0,
+                                            "passwd_issue_list": [],
+                                            "passwd_issue_url": []
+                                        },
                                         "security_score": 100
                                     },
                                     {
-                                        "name": "Child 3.6",
+                                        "name": "Child_3_6",
                                         'img': 'image/icon_printer.png',
                                         "dev_ipv4": "192.168.201.106",
                                         "dev_mac": "48:5F:99:72:65:05",
                                         "dev_brand": "Brother HL-L2395DW series",
                                         "dev_module": "HL-L2395DW",
                                         "dev_OS": "",
-                                        "category": "Printer Scanner",
+                                        "category": "printer_scanner",
                                         "hostname": "Brother HL-L2395DW series",
                                         "bytes": "21.19MB",
                                         "band_width": "12.53Mbps",
                                         "vulnerability": {
                                             "cve_num": 1,
-                                            "cve_list": ["CVE-2018-11581"]
+                                            "cve_list": ["CVE-2016-0800"],
+                                            "cve_url_list": ["https://esupport.trendmicro.com/en-us/home/pages/technical-support/home-network-security/1117964.aspx?view=WebView"]
                                         },
                                         "open_ports": {
                                             "tcp": [80, 443, 515, 631],
-                                            "udp": [137, 161, 5353]
+                                            "udp": [137, 161, 5353],
+                                            "ports_issue_num": 0,
+                                            "ports_issue_list": [],
+                                            "ports_issue_url": []
                                         },
-                                        "weak_passwd": "",
+                                        "weak_passwd": {
+                                            "passwd_issue_num": 0,
+                                            "passwd_issue_list": [],
+                                            "passwd_issue_url": []
+                                        },
                                         "security_score": 75
                                     },
                                     {
-                                        "name": "Child 3.7",
+                                        "name": "Child_3_7",
                                         'img': 'image/icon_camera.png',
                                         "dev_ipv4": "192.168.201.107",
                                         "dev_mac": "44:73:D6:0C:FD:56",
                                         "dev_brand": "Logitech",
                                         "dev_module": "LogiCircle",
                                         "dev_OS": "",
-                                        "category": "IP Camera",
+                                        "category": "ip_camera",
                                         "hostname": "LogiCircle",
                                         "bytes": "549.12MB",
                                         "band_width": "17.84Mbps",
                                         "vulnerability": {
                                             "cve_num": 1,
-                                            "cve_list": ["CVE-2019-13053"]
+                                            "cve_list": ["CVE-2018-9995"],
+                                            "cve_url_list": ["https://esupport.trendmicro.com/en-us/home/pages/technical-support/1120252.aspx"]
                                         },
                                         "open_ports": {
-                                            "tcp": [80, 443, 515, 631],
-                                            "udp": [137, 161, 5353]
+                                            "tcp": [22, 80, 443, 515, 631],
+                                            "udp": [137, 161, 5353],
+                                            "ports_issue_num": 0,
+                                            "ports_issue_list": [],
+                                            "ports_issue_url": []
                                         },
-                                        "weak_passwd": "Yes",
-                                        "security_score": 50
+                                        "weak_passwd": {
+                                            "passwd_issue_num": 0,
+                                            "passwd_issue_list": ["Weak password on SSH"],
+                                            "passwd_issue_url": ["https://esupport.trendmicro.com/en-us/home/pages/technical-support/home-network-security/1117998.aspx?view=WebView"]
+                                        },
+                                        "security_score": 62.8
                                     },
                                     {
-                                        "name": "Child 3.8",
+                                        "name": "Child_3_8",
                                         'img': 'image/icon_tv.png',
                                         "dev_ipv4": "192.168.201.108",
                                         "dev_mac": "2C:2B:F9:48:A6:0B",
                                         "dev_brand": "LG",
                                         "dev_module": "LG TV 75UK6200PCB",
                                         "dev_OS": "",
-                                        "category": "Smart TV",
+                                        "category": "smart_tv",
                                         "hostname": "LGwebOSTV",
                                         "bytes": "189.32MB",
                                         "band_width": "6.84Mbps",
                                         "vulnerability": {
-                                            "cve_num": 0,
-                                            "cve_list": []
+                                            "cve_num": 1,
+                                            "cve_list": ["CVE-2018-11314"],
+                                            "cve_url_list": ["https://esupport.trendmicro.com/en-us/home/pages/technical-support/1120692.aspx"]
+
                                         },
                                         "open_ports": {
                                             "tcp": [],
-                                            "udp": []
+                                            "udp": [],
+                                            "ports_issue_num": 0,
+                                            "ports_issue_list": [],
+                                            "ports_issue_url": []
                                         },
-                                        "weak_passwd": "",
-                                        "security_score": 100
+                                        "weak_passwd": {
+                                            "passwd_issue_num": 0,
+                                            "passwd_issue_list": [],
+                                            "passwd_issue_url": []
+                                        },
+                                        "security_score": 76.5
                                     },
                                     {
-                                        "name": "Child 3.9",
+                                        "name": "Child_3_9",
                                         'img': 'image/icon_speaker.png',
                                         "dev_ipv4": "192.168.201.109",
                                         "dev_mac": "3C:5C:C4:ED:02:23",
                                         "dev_brand": "Amazon",
                                         "dev_module": "Echo 2nd",
                                         "dev_OS": "",
-                                        "category": "Smart Speaker",
+                                        "category": "smart_speaker",
                                         "hostname": "amazon-df3471842",
                                         "bytes": "189.37MB",
                                         "band_width": "6.83Mbps",
                                         "vulnerability": {
                                             "cve_num": 0,
-                                            "cve_list": []
+                                            "cve_list": [],
+                                            "cve_url_list": []
                                         },
                                         "open_ports": {
                                             "tcp": [],
-                                            "udp": []
+                                            "udp": [],
+                                            "ports_issue_num": 0,
+                                            "ports_issue_list": [],
+                                            "ports_issue_url": []
                                         },
-                                        "weak_passwd": "",
+                                        "weak_passwd": {
+                                            "passwd_issue_num": 0,
+                                            "passwd_issue_list": [],
+                                            "passwd_issue_url": []
+                                        },
                                         "security_score": 100
                                     },
                                     {
-                                        "name": "Child 3.10",
+                                        "name": "Child_3_10",
                                         'img': 'image/icon_game.png',
                                         "dev_ipv4": "192.168.201.110",
                                         "dev_mac": "F0:6E:0B:6E:33:69",
                                         "dev_brand": "Microsoft",
                                         "dev_module": "Xbox One",
                                         "dev_OS": "",
-                                        "category": "Game Console",
+                                        "category": "game_console",
                                         "hostname": "Xbox One",
                                         "bytes": "189.32MB",
                                         "band_width": "2.87Mbps",
                                         "vulnerability": {
                                             "cve_num": 0,
-                                            "cve_list": []
+                                            "cve_list": [],
+                                            "cve_url_list": []
                                         },
                                         "open_ports": {
                                             "tcp": [],
-                                            "udp": []
+                                            "udp": [],
+                                            "ports_issue_num": 0,
+                                            "ports_issue_list": [],
+                                            "ports_issue_url": []
                                         },
-                                        "weak_passwd": "",
+                                        "weak_passwd": {
+                                            "passwd_issue_num": 0,
+                                            "passwd_issue_list": [],
+                                            "passwd_issue_url": []
+                                        },
                                         "security_score": 100
                                     }
                                 ]
@@ -987,21 +1178,79 @@
             }
             let x = d3.event.pageX;
             let y = d3.event.pageY;
-            // console.log(d.belongToPackID);
             let belongPack = d3.select("g.packid_" + d.belongToPackID);
-            // console.log(belongPack);
             belongPack.each(function (pack_D) {
                 devicetip.style("left", pack_D.x + 35 + d.x + "px")
                     .style("top", pack_D.y + d.y + 35 + "px");
             });
         }
-        return devicetip.style("visibility", "visible");
+        return devicetip.style("display", "inline");
     }
 
     function nodeMouseout(d, id) {
-        return devicetip.style("visibility", "hidden");
+        return devicetip.style("display", "none");
     }
-
+    //递归计算Detect结果
+    function calculateDetectedResult(data, ret) {
+        total_device_count++;
+        if (data.vulnerability && data.vulnerability.cve_num) {
+            ret.total_vulnerability_count += data.vulnerability.cve_num;
+        }
+        if (data.open_ports && data.open_ports.ports_issue_num) {
+            ret.total_open_port_count += data.open_ports.ports_issue_num;
+        }
+        if (data.weak_passwd && data.weak_passwd.passwd_issue_num) {
+            ret.total_weak_password_count += data.weak_passwd.passwd_issue_num;
+        }
+        if (data.category && data.category.toLowerCase() === "pc")
+            pc_category_count++;
+        if (data.category && data.category.toLowerCase() === "macbook")
+            macbook_category_count++;
+        if (data.category && data.category.toLowerCase() === "android_phone")
+            android_phone_category_count++;
+        if (data.category && data.category.toLowerCase() === "android_tablet")
+            android_tablet_category_count++;
+        if (data.category && data.category.toLowerCase() === "iphone")
+            iphone_category_count++;
+        if (data.category && data.category.toLowerCase() === "ipad")
+            ipad_category_count++;
+        if (data.category && data.category.toLowerCase() === "watch")
+            watch_category_count++;
+        if (data.category && data.category.toLowerCase() === "printer_scanner")
+            printer_scanner_category_count++;
+        if (data.category && data.category.toLowerCase() === "ip_camera")
+            ip_camera_category_count++;
+        if (data.category && data.category.toLowerCase() === "smart_tv")
+            smart_tv_category_count++;
+        if (data.category && data.category.toLowerCase() === "smart_speaker")
+            smart_speaker_category_count++;
+        if (data.category && data.category.toLowerCase() === "game_console")
+            game_console_category_count++;
+        if (data.children && data.children.length != 0) {
+            data.children.forEach(function (c) {
+                calculateDetectedResult(c, ret);
+            })
+        } else {
+            return;
+        }
+    }
+    //show Detect结果
+    function showDeviceCount() {
+        //TODO: total_device_count 只计算叶子节点
+        $("#total_device_count").html(total_device_count - 3);
+        $("#pc_category_count").html(pc_category_count);
+        $("#macbook_category_count").html(macbook_category_count);
+        $("#android_phone_category_count").html(android_phone_category_count);
+        $("#android_tablet_category_count").html(android_tablet_category_count);
+        $("#iphone_category_count").html(iphone_category_count);
+        $("#ipad_category_count").html(ipad_category_count);
+        $("#watch_category_count").html(watch_category_count);
+        $("#printer_scanner_category_count").html(printer_scanner_category_count);
+        $("#ip_camera_category_count").html(ip_camera_category_count);
+        $("#smart_tv_category_count").html(smart_tv_category_count);
+        $("#smart_speaker_category_count").html(smart_speaker_category_count);
+        $("#game_console_category_count").html(game_console_category_count);
+    }
     // show device info into message tip
     function formatDeviceTip(d) {
         resetDeviceTip();
@@ -1059,6 +1308,7 @@
      * **/
 
     function drawTreeTopology() {
+        let treeData = TopologyData;
         if (!treeData) {
             return;
         }
@@ -1147,33 +1397,69 @@
             .attr("transform", function (d) {
                 return "translate(30, -30)";
             }).on('click', (d, id) => {
-                alert("redirect to detail");
+                $(".view-btn").removeClass("active");
+                $('.view-btn[title="Item"]').addClass("active");
+                topologyMode = "Item";
+                drawItemTopology(d.data.name);
             })
             .attr('rx', (d) => 14)
             .attr('ry', (d) => 11)
-            .attr('visibility', (d) => {
-                if (d.data && d.data.vulnerability && d.data.vulnerability.cve_num > 0)
-                    return "visible";
+            .attr('display', (d) => {
+                let total_vulnerability_count = 0;
+                if (d.data && d.data.vulnerability && d.data.vulnerability.cve_num) {
+                    total_vulnerability_count += d.data.vulnerability.cve_num;
+                }
+                if (d.data && d.data.open_ports && d.data.open_ports.ports_issue_num) {
+                    total_vulnerability_count += d.data.open_ports.ports_issue_num;
+                }
+                if (d.data && d.data.weak_passwd && d.data.weak_passwd.passwd_issue_num) {
+                    total_vulnerability_count += d.data.weak_passwd.passwd_issue_num;
+                }
+                if (total_vulnerability_count > 0)
+                    return "inline";
                 else
-                    return "hidden";
+                    return "none";
             });
         nodeEnter.append("text")
             .attr("fill", "white")
             .style("background-color", "black")
             .attr("dx", "25")
             .attr("dy", "-25")
-            .attr('visibility', (d) => {
-                if (d.data && d.data.vulnerability && d.data.vulnerability.cve_num > 0)
-                    return "visible";
+            .attr('display', (d) => {
+                let total_vulnerability_count = 0;
+                if (d.data && d.data.vulnerability && d.data.vulnerability.cve_num) {
+                    total_vulnerability_count += d.data.vulnerability.cve_num;
+                }
+                if (d.data && d.data.open_ports && d.data.open_ports.ports_issue_num) {
+                    total_vulnerability_count += d.data.open_ports.ports_issue_num;
+                }
+                if (d.data && d.data.weak_passwd && d.data.weak_passwd.passwd_issue_num) {
+                    total_vulnerability_count += d.data.weak_passwd.passwd_issue_num;
+                }
+                if (total_vulnerability_count > 0)
+                    return "inline";
                 else
-                    return "hidden";
+                    return "none";
             })
             .on('click', (d, id) => {
-                alert("redirect to detail");
+                $(".view-btn").removeClass("active");
+                $('.view-btn[title="Item"]').addClass("active");
+                topologyMode = "Item";
+                drawItemTopology(d.data.name);
             })
             .text((d) => {
-                if (d.data.vulnerability)
-                    return d.data.vulnerability.cve_num;
+                let total_vulnerability_count = 0;
+                if (d.data && d.data.vulnerability && d.data.vulnerability.cve_num) {
+                    total_vulnerability_count += d.data.vulnerability.cve_num;
+                }
+                if (d.data && d.data.open_ports && d.data.open_ports.ports_issue_num) {
+                    total_vulnerability_count += d.data.open_ports.ports_issue_num;
+                }
+                if (d.data && d.data.weak_passwd && d.data.weak_passwd.passwd_issue_num) {
+                    total_vulnerability_count += d.data.weak_passwd.passwd_issue_num;
+                }
+                if (total_vulnerability_count > 0)
+                    return total_vulnerability_count;
                 else
                     return 0;
             });
@@ -1236,7 +1522,8 @@
      * **/
 
     function drawChartTopology() {
-        if (!treeData) {
+        let chartData = TopologyData;
+        if (!chartData) {
             return;
         }
         if ($("#topo_container svg").length > 0) {
@@ -1252,7 +1539,7 @@
         });
 
         // Construct a rootnode from data
-        rootNode = d3.hierarchy(treeData);
+        rootNode = d3.hierarchy(chartData);
 
         // Prepare svg element
         treeSVG = d3.select("#topo_container").append("svg")
@@ -1260,6 +1547,7 @@
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+            //TODO: 需要重新加一个g来处理放大和拖拽，否则图像有抖动跳动
             .call(zoom);
 
         //update tree node
@@ -1395,7 +1683,6 @@
         let laidOutData = pack_layout(packRoot).descendants();
 
         packSVG = d3.selectAll("g.node--pack")
-            // packSVG = d3.select("#aaaa")
             .filter((d, i) => {
                 if (d.id == packID) {
                     return true;
@@ -1436,6 +1723,338 @@
                 return name;
             });
     }
+
+    /**
+     * Topology show as Item mode
+     * **/
+
+    function drawItemTopology(anchorItemID = null) {
+        let itemData = TopologyData;
+        if (!itemData) {
+            return;
+        }
+        if ($("#topo_container svg").length > 0) {
+            $("#topo_container svg").remove();
+        }
+        i = 0;
+        itemTotalLineCount = 0;
+
+        itemSVG = d3.select("#topo_container").append("svg")
+            .attr("width", 1000)
+            .attr("height", 5800)
+            .append("g")
+            .attr("transform", "translate(" + 280 + "," + 80 + ")");
+
+        //add root item
+        let itemLevel = 0;
+        let rootX = indentWidth * itemLevel;
+        let rootY = lineHeight * itemLevel;
+        let hostname = itemData.hostname ? itemData.hostname : itemData.name;
+        itemSVG.append("g").append("text")
+            .attr("x", rootX)
+            .attr("y", rootY)
+            .attr("class", "item-header")
+            .text(hostname);
+        // Now, root item CloudEdge not have info
+        addItemInfo(itemData, rootX, rootY);
+        i++;
+        itemTotalLineCount++;
+
+        if (itemData.children) {
+            generateItem(itemData.children, itemLevel, rootX, 0, 0);
+        }
+        if (anchorItemID) {
+            let anchorItemG = d3.select("#item_" + anchorItemID);
+            let scroll_offset = $("#item_" + anchorItemID).offset().top;
+            $("body,html").animate({
+                // 让body的scrollTop等于div3的top，就实现了滚动
+                scrollTop: scroll_offset
+            }, 500);
+        }
+    }
+
+    //递归生成Item, 并挂载到g上。递归的层数代表缩进
+    function generateItem(childData, level, baseX, baseY) {
+        if (!childData || !(childData instanceof Array) || childData.length === 0) {
+            return 0;
+        }
+
+        level++;
+
+        for (let index = 0; index < childData.length; index++) {
+
+            const data = childData[index];
+            let hostname = data.hostname ? data.hostname : data.name;
+            let x = baseX + indentWidth;
+            //(14 iteminfo) * (i item above)
+            let y = lineHeight * itemTotalLineCount;
+            let imgWidth = 18;
+
+            let itemG = itemSVG.append("g")
+                .attr("class", "item")
+                .attr("id", function () {
+                    return "item_" + data.name;
+                });
+            // 添加设备名称
+            itemG.append("text")
+                .attr("x", x)
+                .attr("y", y)
+                .attr("class", "item-header")
+                .text(hostname);
+            // 添加一条折线
+            itemSVG.append("path")
+                .attr("class", "link")
+                .attr("d", function () {
+                    // (baseX,baseY)-(baseX-indentWidth,baseY)-(baseX-indentWidth,y)-(x,y)
+                    return "M" + baseX + "," + baseY + " H" + (baseX - indentWidth / 2) + " V" + y + " H" + x;
+                });
+            // 添加折叠图标
+            if (data.children) {
+                if (data.childItemsIsFolded && data.childItemsIsFolded === true) {
+                    itemG.append("image")
+                        .attr('xlink:href', "image/icon_unfold.png")
+                        .attr("x", x - indentWidth / 2 - imgWidth / 2)
+                        .attr("y", y - imgWidth / 2)
+                        .attr("cursor", "pointer")
+                        .attr("childIndex", index)
+                        .attr("width", imgWidth)
+                        .attr("height", imgWidth)
+                        .on('click', unfoldChildItem);
+                } else {
+                    itemG.append("image")
+                        .attr('xlink:href', "image/icon_fold.png")
+                        .attr("x", x - indentWidth / 2 - imgWidth / 2)
+                        .attr("y", y - imgWidth / 2)
+                        .attr("cursor", "pointer")
+                        .attr("childIndex", index)
+                        .attr("width", imgWidth)
+                        .attr("height", imgWidth)
+                        .on('click', foldChildItem);
+                }
+            }
+            itemTotalLineCount++;
+
+            addItemInfo(data, x, y);
+            i++;
+
+            if (data.childItemsIsFolded && data.childItemsIsFolded === true) {
+                //not show the child items
+            } else {
+                generateItem(data.children, level, x, y);
+            }
+        }
+
+        function foldChildItem() {
+            let childIndex = this.getAttribute("childIndex");
+            childData[childIndex].childItemsIsFolded = true;
+            drawItemTopology();
+        }
+
+        function unfoldChildItem(data) {
+            let childIndex = this.getAttribute("childIndex");
+            childData[childIndex].childItemsIsFolded = false;
+            drawItemTopology();
+        }
+    }
+
+    function addItemInfo(data, x, y) {
+        //IP Address: dev_ipv4
+        if (data.dev_ipv4) {
+            y += lineHeight;
+            itemSVG.append("text")
+                .text(function (d) {
+                    return " -IP: " + data.dev_ipv4;
+                })
+                .attr("x", x + 5)
+                .attr("y", y)
+                .attr("class", "item-info");
+            itemTotalLineCount++;
+        }
+        //MAC Address: dev_mac
+        if (data.dev_mac) {
+
+            y += lineHeight;
+            itemSVG.append("text")
+                .text(function (d) {
+                    return " -MAC: " + data.dev_mac;
+                })
+                .attr("x", x + 5)
+                .attr("y", y)
+                .attr("class", "item-info");
+            itemTotalLineCount++;
+        }
+        //Brand: dev_brand
+        if (data.dev_brand) {
+            y += lineHeight;
+            itemSVG.append("text")
+                .text(function (d) {
+                    return " -Brand: " + data.dev_brand;
+                })
+                .attr("x", x + 5)
+                .attr("y", y)
+                .attr("class", "item-info");
+            itemTotalLineCount++;
+        }
+        //Module: dev_module
+        if (data.dev_module) {
+            y += lineHeight;
+            itemSVG.append("text")
+                .text(function (d) {
+                    return " -Module: " + data.dev_module;
+                })
+                .attr("x", x + 5)
+                .attr("y", y)
+                .attr("class", "item-info");
+            itemTotalLineCount++;
+        }
+        //OS: dev_OS
+        if (data.dev_OS) {
+            y += lineHeight;
+            itemSVG.append("text")
+                .text(function (d) {
+                    return " -OS: " + data.dev_OS;
+                })
+                .attr("x", x + 5)
+                .attr("y", y)
+                .attr("class", "item-info");
+            itemTotalLineCount++;
+        }
+        //category
+        if (data.category) {
+            y += lineHeight;
+            itemSVG.append("text")
+                .text(function (d) {
+                    return " -Category: " + data.category;
+                })
+                .attr("x", x + 5)
+                .attr("y", y)
+                .attr("class", "item-info");
+            itemTotalLineCount++;
+        }
+        //Traffic: bytes
+        if (data.bytes) {
+            y += lineHeight;
+            itemSVG.append("text")
+                .text(function (d) {
+                    return " -Traffic: " + data.bytes;
+                })
+                .attr("x", x + 5)
+                .attr("y", y)
+                .attr("class", "item-info");
+            itemTotalLineCount++;
+        }
+        //BandWidth: band_width
+        if (data.band_width) {
+            y += lineHeight;
+            itemSVG.append("text")
+                .text(function (d) {
+                    return " -BandWidth: " + data.band_width;
+                })
+                .attr("x", x + 5)
+                .attr("y", y)
+                .attr("class", "item-info");
+            itemTotalLineCount++;
+        }
+        //vulnerability
+        if (data.vulnerability && data.vulnerability.cve_list.length > 0) {
+            y += lineHeight;
+            itemSVG.append("text")
+                .text(function (d) {
+                    return " -vulnerability: ";
+                })
+                .attr("x", x + 5)
+                .attr("y", y)
+                .attr("class", "item-info")
+                .attr("id", function () {
+                    //TODO: change hostname to name/id
+                    return data.name + "_vulnerability";
+                });
+            let vulnerStr = " -vulnerability: "
+            data.vulnerability.cve_list.forEach(function (v, i) {
+                if (data.vulnerability.cve_url_list && data.vulnerability.cve_url_list.length > i)
+                    vulnerStr += '<a href="' + data.vulnerability.cve_url_list[i] + '" style="fill:blue;" target="_blank" >' + v + "</a>";
+                else
+                    vulnerStr += '<a href="#" style="fill:blue;" target="_blank" >' + v + "</a>";
+                vulnerStr += " ";
+            });
+            $("#" + data.name + "_vulnerability").html(vulnerStr);
+            itemTotalLineCount++;
+        }
+        //open_ports
+        if (data.open_ports && data.open_ports.tcp.length > 0) {
+            y += lineHeight;
+            itemSVG.append("text")
+                .text(function (d) {
+                    return " -Open TCP Ports: ";
+                })
+                .attr("x", x + 5)
+                .attr("y", y)
+                .attr("class", "item-info")
+                .attr("title", "abcdef")
+                .attr("id", function () {
+                    //TODO: change hostname to name/id
+                    return data.name + "_open_tcp_ports";
+                });;
+            let openTCPPortStr = " -Open TCP Ports: "
+            let fakeHit = "Microsoft Internet Connection Firewall (ICF), Internet Connection Sharing (ICS), SSDP Discover Service, Microsoft Universal Plug and Play (UPnP), registered for: ICSLAP";
+            data.open_ports.tcp.forEach(function (v, i) {
+                openTCPPortStr += '<a target="_blank" >' + v + "</a><title>" + fakeHit + "</title>";
+                openTCPPortStr += " ";
+            });
+            $("#" + data.name + "_open_tcp_ports").html(openTCPPortStr);
+            itemTotalLineCount++;
+        }
+        //open_ports
+        if (data.open_ports && data.open_ports.udp.length > 0) {
+            y += lineHeight;
+            itemSVG.append("text")
+                .text(function (d) {
+                    return " -Open UDP Ports: " + data.open_ports.udp;
+                })
+                .attr("x", x + 5)
+                .attr("y", y)
+                .attr("class", "item-info");
+            itemTotalLineCount++;
+        }
+        //weak_passwd
+        if (data.weak_passwd) {
+            y += lineHeight;
+            itemSVG.append("text")
+                .text(function (d) {
+                    return " -Weak password: ";
+                })
+                .attr("x", x + 5)
+                .attr("y", y)
+                .attr("class", "item-info")
+                .attr("id", function () {
+                    //TODO: change hostname to name/id
+                    return data.name + "_weak_password";
+                });
+            let weakPwdStr = " -Weak password: "
+            data.weak_passwd.passwd_issue_list.forEach(function (p, i) {
+                if (data.weak_passwd.passwd_issue_url && data.weak_passwd.passwd_issue_url.length > i)
+                    weakPwdStr += '<a href="' + data.weak_passwd.passwd_issue_url[i] + '" style="fill:blue;" target="_blank" >' + p + "</a>";
+                else
+                    weakPwdStr += '<a href="#" style="fill:blue;" target="_blank" >' + p + "</a>";
+                weakPwdStr += " ";
+            });
+            $("#" + data.name + "_weak_password").html(weakPwdStr);
+            itemTotalLineCount++;
+        }
+        //security_score
+        if (data.security_score) {
+            y += lineHeight;
+            itemSVG.append("text")
+                .text(function (d) {
+                    return " -Security Score: " + data.security_score;
+                })
+                .attr("x", x + 5)
+                .attr("y", y)
+                .attr("class", "item-info");
+            itemTotalLineCount++;
+        }
+    }
+
 </script>
 
 </html>

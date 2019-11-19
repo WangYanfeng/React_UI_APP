@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>D3 Test</title>
+    <!-- <script src="./script/d3.js"></script> -->
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+</head>
+
+<style>
+    .item {
+        color: black;
+        /* font-size: 20; */
+    }
+
+    .item-header {
+        font-size: 16px;
+    }
+
+    .item-info {
+        font-size: 12px;
+        font-family: "Courier New", Menlo, Monaco, Consolas
+    }
+</style>
+
+<body translate="no">
+    <noscript>You need to enable JavaScript to run this website.</noscript>
+    <div id="topo_container" style="height: 100%;"></div>
+    <div id="aaaa"></div>
+</body>
+<script>
+    var treeData = null;
+
+    // set tree canvas size
+    var margin = { top: 80, right: 80, bottom: 30, left: 180 },
+        width = 1000 - margin.left - margin.right,
+        height = 1000 - margin.top - margin.bottom;
+    // tree node id
+    var i = 0;
+
+    var itemSVG = null;
+    var indentWidth = 40;
+    var lineHeight = 30;
+
+    function setTreeData() {
+        treeData = {
+            "name": "CloudEdge",
+            'img': 'image/icon_ce.png',
+            "children":
+                [
+                    {
+                        "name": "LAN1 Switch",
+                        'img': 'image/icon_switch.png',
+                        "children":
+                            [
+                                {
+                                    "name": "Child 1.1",
+                                    "img": 'image/icon_windows.png',
+                                    "dev_ipv4": "192.168.0.100",
+                                    "dev_mac": "18:1D:EA:F5:FB:E5",
+                                    "dev_brand": "Dell",
+                                    "dev_module": "",
+                                    "dev_OS": "Windows 10",
+                                    "category": "PC",
+                                    "hostname": "NJ-LEON-LI",
+                                    "bytes": "180.86MB",
+                                    "band_width": "150.32kbps",
+                                    "vulnerability": {
+                                        "cve_num": 0,
+                                        "cve_list": []
+                                    },
+                                    "open_ports": {
+                                        "tcp": [21, 135, 139, 445, 5357],
+                                        "udp": [137]
+                                    },
+                                    "weak_passwd": "",
+                                    "security_score": 100
+                                },
+                                {
+                                    "name": "Child 1.2",
+                                    'img': 'image/icon_windows.png',
+                                    "dev_ipv4": "192.168.0.101",
+                                    "dev_mac": "30:B4:9E:F3:DF:76",
+                                    "dev_brand": "Lenovo",
+                                    "dev_module": "",
+                                    "dev_OS": "Windows 7",
+                                    "category": "PC",
+                                    "hostname": "NJ-EDWIN-WANG",
+                                    "bytes": "1.53GB",
+                                    "band_width": "317kbps",
+                                    "vulnerability": {
+                                        "cve_num": 0,
+                                        "cve_list": []
+                                    },
+                                    "open_ports": {
+                                        "tcp": [135, 139, 445],
+                                        "udp": []
+                                    },
+                                    "weak_passwd": "",
+                                    "security_score": 100
+                                },
+                                {
+                                    "name": "Child 1.3",
+                                    'img': 'image/icon_mac.png',
+                                    "dev_ipv4": "192.168.201.102",
+                                    "dev_mac": "88:1D:EA:F5:FB:E5",
+                                    "dev_brand": "Apple",
+                                    "dev_module": "MacBook Pro",
+                                    "dev_OS": "Mac OS X",
+                                    "category": "MacBook",
+                                    "hostname": "NJ-KEN-LI-MAC",
+                                    "bytes": "461.33MB",
+                                    "band_width": "87.18kbps",
+                                    "vulnerability": {
+                                        "cve_num": 0,
+                                        "cve_list": []
+                                    },
+                                    "open_ports": {
+                                        "tcp": [],
+                                        "udp": [137, 5353]
+                                    },
+                                    "weak_passwd": "",
+                                    "security_score": 100
+                                },
+                                {
+                                    "name": "Child 1.4",
+                                    'img': 'image/icon_printer.png',
+                                    "dev_ipv4": "192.168.0.103",
+                                    "dev_mac": "C4:65:16:50:D1:54",
+                                    "dev_brand": "HP",
+                                    "dev_module": "HP OfficeJet 3830",
+                                    "dev_OS": "",
+                                    "category": "",
+                                    "hostname": "HP OfficeJet 3830 series",
+                                    "bytes": "20.28MB",
+                                    "band_width": "152.61kbps",
+                                    "vulnerability": {
+                                        "cve_num": 2,
+                                        "cve_list": ["CVE-2017-2741", "CVE-2019-6318"]
+                                    },
+                                    "open_ports": {
+                                        "tcp": [80, 443, 631, 1270, 8080, 9100],
+                                        "udp": [137, 161, 5353]
+                                    },
+                                    "weak_passwd": "",
+                                    "security_score": 60
+                                },
+                                {
+                                    "name": "Child 1.5",
+                                    'img': 'image/icon_camera.png',
+                                    "dev_ipv4": "192.168.0.104",
+                                    "dev_mac": "28:10:7B:1C:B1:0D",
+                                    "dev_brand": "D-LINK",
+                                    "dev_module": "D-LINK camera(DCS-930L)",
+                                    "dev_OS": "",
+                                    "category": "",
+                                    "hostname": "DCS-930L",
+                                    "bytes": "720.82MB",
+                                    "band_width": "152.49kbps",
+                                    "vulnerability": {
+                                        "cve_num": 1,
+                                        "cve_list": ["CVE-2019-10999"]
+                                    },
+                                    "open_ports": {
+                                        "tcp": [],
+                                        "udp": []
+                                    },
+                                    "weak_passwd": "Yes",
+                                    "security_score": 80
+                                }
+                            ]
+                    },
+                    {
+                        "name": "LAN2",
+                        'img': 'image/icon_linux.png',
+                        "dev_ipv4": "192.168.1.102",
+                        "dev_mac": "00:90:0B:65:0B:09",
+                        "dev_brand": "Intel",
+                        "dev_module": "",
+                        "dev_OS": "CentOS 7.5",
+                        "category": "",
+                        "hostname": "localhost",
+                        "bytes": "8.52GB",
+                        "band_width": "28.54Mbps",
+                        "vulnerability": {
+                            "cve_num": 0,
+                            "cve_list": []
+                        },
+                        "open_ports": {
+                            "tcp": [],
+                            "udp": [137, 5353]
+                        },
+                        "weak_passwd": "",
+                        "security_score": 100
+                    },
+                    {
+                        "name": "LAN3 AP",
+                        'img': 'image/icon_ap.png',
+                        "children":
+                            [
+                                {
+                                    "name": "Child 3.1",
+                                    'img': 'image/icon_apple.png',
+                                    "dev_ipv4": "192.168.201.101",
+                                    "dev_mac": "B0:34:95:16:B5:BB",
+                                    "dev_brand": "Apple",
+                                    "dev_module": "Wifi only iPad Air",
+                                    "dev_OS": "IOS",
+                                    "category": "iPad",
+                                    "hostname": "Chen-Wang iPad",
+                                    "bytes": "920.91kB",
+                                    "band_width": "12.57kbps",
+                                    "vulnerability": {
+                                        "cve_num": 0,
+                                        "cve_list": []
+                                    },
+                                    "open_ports": {
+                                        "tcp": [],
+                                        "udp": []
+                                    },
+                                    "weak_passwd": "",
+                                    "security_score": 100
+                                },
+                                {
+                                    "name": "Child 3.2",
+                                    'img': 'image/icon_apple.png',
+                                    "dev_ipv4": "192.168.201.102",
+                                    "dev_mac": "C0:CC:F8:3D:DA:ED",
+                                    "dev_brand": "Apple",
+                                    "dev_module": "iPhone 6s Plus",
+                                    "dev_OS": "iPhone/iOS 12.3.1",
+                                    "category": "iPhone",
+                                    "hostname": "LeoniPhone",
+                                    "bytes": "32.30kB",
+                                    "band_width": "704.12bps",
+                                    "vulnerability": {
+                                        "cve_num": 0,
+                                        "cve_list": []
+                                    },
+                                    "open_ports": {
+                                        "tcp": [62078],
+                                        "udp": []
+                                    },
+                                    "weak_passwd": "",
+                                    "security_score": 100
+                                },
+                                {
+                                    "name": "Child 3.3",
+                                    'img': 'image/icon_android.png',
+                                    "dev_ipv4": "192.168.201.103",
+                                    "dev_mac": "9C:5C:F9:3C:82:A9",
+                                    "dev_brand": "Sony",
+                                    "dev_module": "Sony Xperia XZ",
+                                    "dev_OS": "Android/8.0.0",
+                                    "category": "Android Phone",
+                                    "hostname": "android-eeb3c6c7053e39bb",
+                                    "bytes": "89.57MB",
+                                    "band_width": "10.06kbps",
+                                    "vulnerability": {
+                                        "cve_num": 0,
+                                        "cve_list": []
+                                    },
+                                    "open_ports": {
+                                        "tcp": [],
+                                        "udp": []
+                                    },
+                                    "weak_passwd": "",
+                                    "security_score": 100
+                                },
+                                {
+                                    "name": "Child 3.4",
+                                    'img': 'image/icon_android.png',
+                                    "dev_ipv4": "192.168.201.104",
+                                    "dev_mac": "A4:93:3F:80:34:9B",
+                                    "dev_brand": "Huawei",
+                                    "dev_module": "HUAWEI MediaPad M5",
+                                    "dev_OS": "Android/8.1.1",
+                                    "category": "Android Tablet",
+                                    "hostname": "HUAWEI_MediaPad_M5-ebe24e",
+                                    "bytes": "129.04MB",
+                                    "band_width": "20.64kbps",
+                                    "vulnerability": {
+                                        "cve_num": 0,
+                                        "cve_list": []
+                                    },
+                                    "open_ports": {
+                                        "tcp": [80],
+                                        "udp": []
+                                    },
+                                    "weak_passwd": "",
+                                    "security_score": 100
+                                },
+                                {
+                                    "name": "Child 3.5",
+                                    'img': 'image/icon_watch.png',
+                                    "dev_ipv4": "192.168.201.105",
+                                    "dev_mac": "68:FE:F7:41:BA:7E",
+                                    "dev_brand": "Apple",
+                                    "dev_module": "Apple Watch",
+                                    "dev_OS": "iOS",
+                                    "category": "Watch",
+                                    "hostname": "GavinsAppleWatch",
+                                    "bytes": "159.75kB",
+                                    "band_width": "0bps",
+                                    "vulnerability": {
+                                        "cve_num": 0,
+                                        "cve_list": []
+                                    },
+                                    "open_ports": {
+                                        "tcp": [],
+                                        "udp": []
+                                    },
+                                    "weak_passwd": "",
+                                    "security_score": 100
+                                },
+                                {
+                                    "name": "Child 3.6",
+                                    'img': 'image/icon_printer.png',
+                                    "dev_ipv4": "192.168.201.106",
+                                    "dev_mac": "48:5F:99:72:65:05",
+                                    "dev_brand": "Brother HL-L2395DW series",
+                                    "dev_module": "HL-L2395DW",
+                                    "dev_OS": "",
+                                    "category": "Printer Scanner",
+                                    "hostname": "Brother HL-L2395DW series",
+                                    "bytes": "21.19MB",
+                                    "band_width": "12.53Mbps",
+                                    "vulnerability": {
+                                        "cve_num": 1,
+                                        "cve_list": ["CVE-2018-11581"]
+                                    },
+                                    "open_ports": {
+                                        "tcp": [80, 443, 515, 631],
+                                        "udp": [137, 161, 5353]
+                                    },
+                                    "weak_passwd": "",
+                                    "security_score": 75
+                                },
+                                {
+                                    "name": "Child 3.7",
+                                    'img': 'image/icon_camera.png',
+                                    "dev_ipv4": "192.168.201.107",
+                                    "dev_mac": "44:73:D6:0C:FD:56",
+                                    "dev_brand": "Logitech",
+                                    "dev_module": "LogiCircle",
+                                    "dev_OS": "",
+                                    "category": "IP Camera",
+                                    "hostname": "LogiCircle",
+                                    "bytes": "549.12MB",
+                                    "band_width": "17.84Mbps",
+                                    "vulnerability": {
+                                        "cve_num": 1,
+                                        "cve_list": ["CVE-2019-13053"]
+                                    },
+                                    "open_ports": {
+                                        "tcp": [80, 443, 515, 631],
+                                        "udp": [137, 161, 5353]
+                                    },
+                                    "weak_passwd": "Yes",
+                                    "security_score": 50
+                                },
+                                {
+                                    "name": "Child 3.8",
+                                    'img': 'image/icon_tv.png',
+                                    "dev_ipv4": "192.168.201.108",
+                                    "dev_mac": "2C:2B:F9:48:A6:0B",
+                                    "dev_brand": "LG",
+                                    "dev_module": "LG TV 75UK6200PCB",
+                                    "dev_OS": "",
+                                    "category": "Smart TV",
+                                    "hostname": "LGwebOSTV",
+                                    "bytes": "189.32MB",
+                                    "band_width": "6.84Mbps",
+                                    "vulnerability": {
+                                        "cve_num": 0,
+                                        "cve_list": []
+                                    },
+                                    "open_ports": {
+                                        "tcp": [],
+                                        "udp": []
+                                    },
+                                    "weak_passwd": "",
+                                    "security_score": 100
+                                },
+                                {
+                                    "name": "Child 3.9",
+                                    'img': 'image/icon_speaker.png',
+                                    "dev_ipv4": "192.168.201.109",
+                                    "dev_mac": "3C:5C:C4:ED:02:23",
+                                    "dev_brand": "Amazon",
+                                    "dev_module": "Echo 2nd",
+                                    "dev_OS": "",
+                                    "category": "Smart Speaker",
+                                    "hostname": "amazon-df3471842",
+                                    "bytes": "189.37MB",
+                                    "band_width": "6.83Mbps",
+                                    "vulnerability": {
+                                        "cve_num": 0,
+                                        "cve_list": []
+                                    },
+                                    "open_ports": {
+                                        "tcp": [],
+                                        "udp": []
+                                    },
+                                    "weak_passwd": "",
+                                    "security_score": 100
+                                },
+                                {
+                                    "name": "Child 3.10",
+                                    'img': 'image/icon_game.png',
+                                    "dev_ipv4": "192.168.201.110",
+                                    "dev_mac": "F0:6E:0B:6E:33:69",
+                                    "dev_brand": "Microsoft",
+                                    "dev_module": "Xbox One",
+                                    "dev_OS": "",
+                                    "category": "Game Console",
+                                    "hostname": "Xbox One",
+                                    "bytes": "189.32MB",
+                                    "band_width": "2.87Mbps",
+                                    "vulnerability": {
+                                        "cve_num": 0,
+                                        "cve_list": []
+                                    },
+                                    "open_ports": {
+                                        "tcp": [],
+                                        "udp": []
+                                    },
+                                    "weak_passwd": "",
+                                    "security_score": 100
+                                }
+                            ]
+                    }
+                ]
+        };
+    }
+
+    treeData = {
+        "name": "CloudEdge",
+        "children": [
+            {
+                "name": "Child 1",
+                "children": [
+                    {
+                        "name": "Child 1.1",
+                        "children": []
+                    }, {
+                        "name": "Child 1.2",
+                        "children": [
+                            {
+                                "name": "Child 1.2.1",
+                                "children": []
+                            }, {
+                                "name": "Child 1.2.2",
+                                "children": []
+                            }
+                        ]
+                    }, {
+                        "name": "Child 1.3",
+                        "children": []
+                    }, {
+                        "name": "Child 1.4",
+                        "children": []
+                    }
+                ]
+            }
+            ,
+            {
+                "name": "Child 2",
+                "children": [
+                    {
+                        "name": "Child 2.1",
+                        "children": []
+                    }, {
+                        "name": "Child 2.2",
+                        "children": []
+                    }, {
+                        "name": "Child 2.3",
+                        "children": []
+                    }, {
+                        "name": "Child 2.4",
+                        "children": []
+                    },
+                ]
+            },
+            {
+                "name": "Child 3",
+                "children": [
+                    {
+                        "name": "Child 3.1",
+                        "children": [
+                            {
+                                "name": "Child 3.1.1",
+                                "children": []
+                            }, {
+                                "name": "Child 3.1.2",
+                                "children": []
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Child 4",
+                "children": [
+                    {
+                        "name": "Child 4.1",
+                        "children": [
+                            {
+                                "name": "Child 4.1.1",
+                                "children": []
+                            }, {
+                                "name": "Child 4.1.2",
+                                "children": [
+                                    {
+                                        "name": "Child 4.1.2.1",
+                                        "children": []
+                                    }, {
+                                        "name": "Child 4.1.2.2",
+                                        "children": []
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Child 5",
+                "children": [
+                    {
+                        "name": "Child 5.1",
+                        "children": []
+                    }
+                ]
+            }
+        ]
+    }
+
+    // setTreeData();
+    drawItemTopology();
+
+    function drawItemTopology() {
+        if (!treeData) {
+            return;
+        }
+        if ($("#topo_container svg").length > 0) {
+            $("#topo_container svg").remove();
+        }
+        itemSVG = d3.select("#topo_container").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        //add root item
+        let itemLevel = 0;
+        let rootX = indentWidth * itemLevel;
+        let rootY = lineHeight * itemLevel;
+        let hostname = treeData.hostname ? treeData.hostname : treeData.name;
+        itemSVG.append("g").append("text")
+            .attr("x", rootX)
+            .attr("y", rootY)
+            .attr("class", "item-header")
+            .text(hostname);
+        i++;
+
+
+        if (treeData.children) {
+            console.log(treeData.children);
+            generateItem(treeData.children, itemLevel, rootX, 0);
+        }
+    }
+
+    //递归生成Item, 并挂载到g上。递归的层数代表缩进
+    function generateItem(childData, level, baseX) {
+        if (!childData || !(childData instanceof Array) || childData.length === 0) {
+            return 0;
+        }
+
+        level++;
+
+        for (let index = 0; index < childData.length; index++) {
+            const data = childData[index];
+            let hostname = data.hostname ? data.hostname : data.name;
+            let x = baseX + indentWidth;
+            let y = lineHeight * i;
+
+            let text = itemSVG.append("g")
+                .attr("class", "item")
+                .append("text")
+                .attr("x", x)
+                .attr("y", y)
+                .attr("class", "item-header")
+                .text(hostname);
+
+            i++;
+
+            generateItem(data.children, level, x);
+        }
+
+    }
+</script>
+
+</html>
