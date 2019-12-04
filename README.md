@@ -21,7 +21,6 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
    connect() 把指定的state和指定的action与React组件连接起来。
    \<Provider/> 把state传给它的所有子组件。
 4. redux-persist redux的state数据必须保存到localStorage或sessionStorage，否则刷新页面后会丢失。redux-persist可以将store中的数据缓存到浏览器的sessionStorage或者localStorage中
-5. 
 ### element-react
 ### react-chartjs chart.js
 1. [GIT doc](https://github.com/chartjs/Chart.js/tree/v1.1.1)
@@ -30,7 +29,9 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 ### babel
 1. 是JS编译器，用来将最新的JS语法转化为ES5语法。babel还可以转换JSX语法。
 2. babel只转换语法，babel-pilofill可以转换api
-
+### d3.js
+d3 画树状图
+http://localhost:3000/d3.html
 
 # Available Scripts
 In the project directory, you can run: <br/>
